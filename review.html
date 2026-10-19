@@ -1,0 +1,2016 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Peer Review & Research Sources · Operation Full Stack</title>
+<meta name="description" content="Hostile red-team pass identifying 7 critical failure modes, mitigations, and salary data citations.">
+<!-- Instant Theme Guard to avoid FOUT -->
+<script>
+(function(){
+  var t = localStorage.getItem('fs-theme');
+  if (t === 'dark' || (!t && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+    document.documentElement.classList.add('dark');
+  }
+})();
+</script>
+<style>
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;color:#1E1B2E;background:#FFF9F2;
+  font-family:"Segoe UI",system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif;
+  line-height:1.55;-webkit-font-smoothing:antialiased;
+}
+body::before{
+  content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:
+    radial-gradient(900px 600px at 8% -5%, rgba(255,107,61,.13), transparent 60%),
+    radial-gradient(800px 600px at 100% 8%, rgba(124,92,255,.12), transparent 60%),
+    radial-gradient(900px 700px at 50% 110%, rgba(14,159,138,.10), transparent 60%);
+}
+h1,h2,h3,h4{line-height:1.15;letter-spacing:-.02em;margin:0}
+p{margin:0}
+a{color:#6C4CE0}
+a:hover{text-decoration-thickness:2px}
+.wrap{max-width:1180px;margin:0 auto;padding:0 24px}
+.skip{position:absolute;left:-9999px;top:0;background:#1E1B2E;color:#fff;padding:12px 18px;border-radius:0 0 12px 0;z-index:200}
+.skip:focus{left:0}
+:focus-visible{outline:3px solid #FF6B3D;outline-offset:2px;border-radius:6px}
+
+/* phase colour themes */
+.c1{--pc:#FF6B3D;--pcs:#FFF1EA}
+.c2{--pc:#E39A00;--pcs:#FFF7E3}
+.c3{--pc:#7C5CFF;--pcs:#F2EEFF}
+.c4{--pc:#0E9F8A;--pcs:#E9F8F5}
+.c5{--pc:#2D9CDB;--pcs:#EAF5FC}
+.c6{--pc:#E0457B;--pcs:#FDECF2}
+.c7{--pc:#9B51E0;--pcs:#F5EDFC}
+.c8{--pc:#B98A00;--pcs:#FBF4DE}
+.c9{--pc:#219653;--pcs:#EAF7EF}
+
+/* ---------- ANIME MEME BLOCKS ---------- */
+.ribbon{padding:22px 0 6px}
+.ribbon-head{display:flex;flex-wrap:wrap;align-items:center;gap:10px;font-weight:800;font-size:.92rem;color:#3A3450;margin-bottom:16px}
+.ribbon-head .tag{background:linear-gradient(120deg,#FF6B3D,#E0457B);color:#fff;border-radius:999px;padding:5px 12px;font-size:.68rem;font-weight:900;letter-spacing:.12em}
+.anime-3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.anime-card{margin:0;position:relative;border-radius:20px;overflow:hidden;background:#16121F;box-shadow:0 16px 38px rgba(30,27,46,.20);display:flex;flex-direction:column}
+.anime-card .pic{position:relative;height:280px;overflow:hidden;flex:0 0 auto}
+.anime-card img{width:100%;height:100%;object-fit:cover;object-position:center 34%;display:block;transition:transform .6s ease}
+.anime-card:hover img{transform:scale(1.06)}
+.anime-card.dbz img{object-position:center 0%}   /* poster: keep the WORK HARD line visible */
+.anime-card.dbz .pic::after{background:linear-gradient(180deg,rgba(12,10,20,0) 55%,rgba(12,10,20,.92) 100%)}
+.anime-card .pic::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(12,10,20,0) 45%,rgba(12,10,20,.9) 100%)}
+.anime-card figcaption{padding:0 16px 16px;color:#E9E2F6;font-size:.87rem;line-height:1.5;margin-top:-58px;position:relative;z-index:2}
+.anime-card .series{display:inline-block;font-size:.64rem;font-weight:900;letter-spacing:.14em;color:#FFB08F;margin-bottom:5px}
+.anime-card b{display:block;color:#fff;font-size:1rem;margin-bottom:3px}
+.anime-card .ico{position:absolute;top:12px;left:12px;z-index:3;font-size:.62rem;font-weight:900;letter-spacing:.1em;background:rgba(20,18,32,.72);backdrop-filter:blur(6px);color:#fff;padding:5px 9px;border-radius:999px}
+.arc-divider{display:grid;grid-template-columns:290px 1fr;gap:22px;align-items:center;border-radius:24px;padding:20px;margin:4px 0 26px;overflow:hidden;background:linear-gradient(120deg,#1E1B2E 0%,#2B2350 55%,#3B2B63 100%);box-shadow:0 20px 46px rgba(30,27,46,.24)}
+.arc-divider img{width:100%;display:block;border-radius:16px;max-height:270px;object-fit:cover;box-shadow:0 10px 24px rgba(0,0,0,.35)}
+.arc-divider .k{font-size:.66rem;font-weight:900;letter-spacing:.16em;text-transform:uppercase;color:#FF9E7A;margin-bottom:9px}
+.arc-divider h3{color:#fff;font-size:clamp(1.05rem,2vw,1.35rem);margin-bottom:8px}
+.arc-divider p{color:#CFC6E8;font-size:.93rem}
+.arc-divider p b{color:#fff}
+.arc-divider.midboss{background:linear-gradient(120deg,#2A1030 0%,#5B1A3C 60%,#8A2A3B 100%)}
+.arc-divider.midboss .k{color:#FFC46B}
+.meme-strip{position:relative;border-radius:24px;overflow:hidden;margin:22px 0;box-shadow:0 18px 44px rgba(30,27,46,.22);background:#16121F}
+.meme-strip img{width:100%;display:block;aspect-ratio:21/9;object-fit:cover;object-position:center 45%}
+.meme-strip.levi img{aspect-ratio:21/8;object-position:center 34%}
+.meme-strip .overlay{position:absolute;inset:auto 0 0 0;padding:22px 24px;background:linear-gradient(transparent,rgba(10,8,18,.92));color:#fff}
+.meme-strip .overlay .k{display:inline-block;font-size:.64rem;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:#FFB08F;margin-bottom:6px}
+.meme-strip .overlay b{display:block;font-size:clamp(1rem,2.2vw,1.45rem);line-height:1.2}
+.meme-strip .overlay p{font-size:.85rem;color:#D9D2EA;margin-top:5px}
+.meme.anime{background:#16121F;color:#F0EAFB;border-color:#2B2350}
+.meme.anime b{color:#fff}
+.meme.anime span{color:#FFB08F}
+.meme .who{font-size:.66rem;font-weight:900;letter-spacing:.12em;color:#FF9E7A;text-transform:uppercase}
+
+/* ---------- NAV ---------- */
+.nav{position:sticky;top:0;z-index:100;background:rgba(255,249,242,.9);backdrop-filter:blur(14px);border-bottom:1px solid #EDE6DC}
+.nav .wrap{display:flex;align-items:center;gap:18px;height:64px}
+.logo{display:flex;align-items:center;gap:10px;font-weight:800;letter-spacing:-.02em;text-decoration:none;color:#1E1B2E;white-space:nowrap}
+.logo .dot{width:34px;height:34px;border-radius:11px;display:grid;place-items:center;color:#fff;font-size:17px;background:linear-gradient(135deg,#FF6B3D,#E0457B 55%,#7C5CFF);box-shadow:0 6px 16px rgba(224,69,123,.32)}
+.nav-links{display:flex;gap:4px;margin-left:auto;overflow-x:auto;scrollbar-width:none;min-width:0;flex:1 1 auto}
+.nav-links::-webkit-scrollbar{display:none}
+.nav-links a{padding:7px 10px;border-radius:999px;font-size:.83rem;font-weight:600;color:#4A4463;text-decoration:none;white-space:nowrap}
+.nav-links a:hover{background:#F4ECE2;color:#1E1B2E}
+.nav-progress{display:flex;align-items:center;gap:8px;font-size:.78rem;font-weight:800;color:#0E9F8A;white-space:nowrap;flex:0 0 auto}
+.nav-progress .mini{width:56px;height:8px;border-radius:99px;background:#EDE6DC;overflow:hidden;flex:0 0 56px}
+.nav-progress .mini i{display:block;height:100%;width:0;background:linear-gradient(90deg,#0E9F8A,#2D9CDB);border-radius:99px;transition:width .35s ease}
+
+/* ---------- HERO ---------- */
+.hero{padding:46px 0 18px}
+.hero-grid{display:grid;grid-template-columns:1.06fr .94fr;gap:40px;align-items:center}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;background:#fff;border:1px solid #EDE6DC;border-radius:999px;padding:7px 14px;font-size:.76rem;font-weight:800;letter-spacing:.09em;text-transform:uppercase;color:#5A5570;box-shadow:0 4px 14px rgba(30,27,46,.05)}
+.eyebrow .pulse{width:9px;height:9px;border-radius:50%;background:#27AE60;box-shadow:0 0 0 0 rgba(39,174,96,.6);animation:pulse 2.2s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(39,174,96,.55)}70%{box-shadow:0 0 0 12px rgba(39,174,96,0)}100%{box-shadow:0 0 0 0 rgba(39,174,96,0)}}
+h1{font-size:clamp(2.15rem,4.4vw,3.45rem);font-weight:900;margin:18px 0 0}
+.grad{background:linear-gradient(100deg,#FF6B3D 0%,#E0457B 42%,#7C5CFF 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.lede{font-size:1.08rem;color:#5A5570;margin-top:16px;max-width:56ch}
+.meta-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+.chip{display:inline-flex;align-items:center;gap:6px;background:#fff;border:1px solid #EDE6DC;border-radius:999px;padding:6px 12px;font-size:.8rem;font-weight:700;color:#4A4463}
+.chip.solid{background:#1E1B2E;color:#FFF9F2;border-color:#1E1B2E}
+.cta-row{display:flex;flex-wrap:wrap;gap:12px;margin-top:24px}
+.btn{display:inline-flex;align-items:center;gap:9px;border:0;cursor:pointer;font-family:inherit;font-weight:800;font-size:.95rem;padding:13px 20px;border-radius:14px;text-decoration:none;transition:transform .15s ease,box-shadow .15s ease}
+.btn:hover{transform:translateY(-2px)}
+.btn-primary{color:#fff;background:linear-gradient(120deg,#FF6B3D,#E0457B);box-shadow:0 12px 26px rgba(224,69,123,.30)}
+.btn-ghost{background:#fff;color:#1E1B2E;border:1.5px solid #E6DDD1;box-shadow:0 6px 16px rgba(30,27,46,.05)}
+.hero-art{position:relative}
+.hero-art img{width:100%;display:block;border-radius:26px;box-shadow:0 26px 60px rgba(30,27,46,.20);object-fit:cover}
+.art-tag{position:absolute;left:18px;bottom:18px;right:18px;display:flex;align-items:center;gap:12px;background:rgba(20,18,32,.72);backdrop-filter:blur(8px);color:#FFF9F2;border-radius:16px;padding:12px 14px}
+.art-tag .ico{width:38px;height:38px;flex:0 0 38px;border-radius:12px;display:grid;place-items:center;background:linear-gradient(135deg,#FF6B3D,#7C5CFF);font-size:19px}
+.art-tag b{display:block;font-size:.86rem;letter-spacing:.06em;text-transform:uppercase}
+.art-tag small{color:#D9D2EA;font-size:.78rem}
+
+/* progress panel */
+.panel{background:#fff;border:1px solid #EDE6DC;border-radius:20px;padding:18px 20px;box-shadow:0 14px 34px rgba(30,27,46,.07)}
+.panel-top{display:flex;align-items:baseline;justify-content:space-between;gap:12px}
+.panel-top .big{font-size:2.5rem;font-weight:900;letter-spacing:-.04em;line-height:1;background:linear-gradient(120deg,#0E9F8A,#2D9CDB);-webkit-background-clip:text;background-clip:text;color:transparent}
+.panel-top small{font-weight:700;color:#5A5570}
+.panel p.small{font-size:.82rem;color:#78718C;margin-top:6px}
+.bar{height:12px;border-radius:99px;background:#F1EAE0;overflow:hidden;margin-top:12px}
+.bar > i{display:block;height:100%;width:0;border-radius:99px;background:linear-gradient(90deg,#0E9F8A,#2D9CDB,#7C5CFF);transition:width .4s ease}
+
+/* ---------- SECTIONS ---------- */
+section{padding:54px 0;scroll-margin-top:76px}
+.sec-head{max-width:820px;margin-bottom:26px}
+.kicker{font-size:.76rem;font-weight:900;letter-spacing:.16em;text-transform:uppercase;color:#B4512E;margin-bottom:10px}
+h2{font-size:clamp(1.6rem,3.4vw,2.35rem);font-weight:900}
+.sub{color:#5A5570;margin-top:12px;font-size:1.02rem}
+.grid{display:grid;gap:16px}
+.grid > *,.two > *,.sched > *{min-width:0}
+.g3{grid-template-columns:repeat(3,1fr)}
+.g2{grid-template-columns:repeat(2,1fr)}
+.card{background:#fff;border:1px solid #EDE6DC;border-radius:18px;padding:20px;box-shadow:0 10px 26px rgba(30,27,46,.05);min-width:0}
+.card h4{font-size:1rem;margin-bottom:6px}
+.card p{font-size:.9rem;color:#5A5570}
+.stat{position:relative;overflow:hidden}
+.stat::after{content:"";position:absolute;inset:auto -30px -40px auto;width:110px;height:110px;border-radius:50%;background:linear-gradient(135deg,rgba(255,107,61,.16),rgba(124,92,255,.10))}
+.stat .v{font-size:1.7rem;font-weight:900;letter-spacing:-.03em;background:linear-gradient(120deg,#FF6B3D,#E0457B);-webkit-background-clip:text;background-clip:text;color:transparent}
+.stat .l{font-weight:800;margin-top:2px;font-size:.95rem}
+.stat .s{font-size:.8rem;color:#6A6480;margin-top:6px}
+.stat a{font-size:.74rem;font-weight:700;display:inline-block;margin-top:8px;text-decoration:none}
+
+.note{border-radius:20px;padding:22px 24px;background:linear-gradient(120deg,#EDFBF7,#F3F0FF);border:1px solid #D9EFE9}
+.note h4{font-size:1.05rem;margin-bottom:10px}
+.note ul{margin:0;padding-left:20px;color:#4A4463;font-size:.94rem}
+.note li{margin:6px 0}
+
+/* tables */
+.table-wrap{overflow-x:auto;max-width:100%;border:1px solid #EDE6DC;border-radius:18px;background:#fff;box-shadow:0 10px 26px rgba(30,27,46,.05)}
+table{border-collapse:collapse;width:100%;font-size:.9rem;min-width:640px}
+th{background:#FBF5EC;text-align:left;padding:12px 16px;font-size:.74rem;letter-spacing:.1em;text-transform:uppercase;color:#6A6480;border-bottom:1px solid #EDE6DC}
+td{padding:12px 16px;border-bottom:1px solid #F4EEE5;vertical-align:top}
+tr:last-child td{border-bottom:0}
+tr:hover td{background:#FFFCF7}
+.pill{display:inline-block;font-size:.68rem;font-weight:900;letter-spacing:.08em;padding:4px 9px;border-radius:999px;white-space:nowrap}
+.p-must{background:#FFE9E1;color:#B3401D}
+.p-should{background:#E8F6F2;color:#0B6B5C}
+.p-bonus{background:#EFEAFF;color:#5B3BBF}
+.p-later{background:#EFEFEF;color:#5A5570}
+
+/* ---------- ROADMAP ---------- */
+.toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:0 0 22px}
+.toolbar .spacer{margin-left:auto}
+.tool-btn{font-family:inherit;font-size:.82rem;font-weight:800;cursor:pointer;background:#fff;border:1.5px solid #E6DDD1;color:#3A3450;padding:9px 14px;border-radius:999px}
+.tool-btn:hover{background:#FBF3E9}
+.timeline{display:grid;gap:26px}
+.phase{position:relative;background:#fff;border:1px solid #EDE6DC;border-radius:24px;padding:24px;box-shadow:0 16px 40px rgba(30,27,46,.07);border-top:6px solid var(--pc)}
+.phase + .phase::before{content:"▼";position:absolute;top:-23px;left:50%;transform:translateX(-50%);font-size:13px;color:#C9BFAF}
+.phase-head{display:flex;align-items:flex-start;gap:16px;flex-wrap:wrap}
+.badge{width:56px;height:56px;flex:0 0 56px;border-radius:18px;display:grid;place-items:center;font-weight:900;font-size:1.15rem;color:#fff;background:var(--pc);box-shadow:0 10px 22px color-mix(in srgb,var(--pc) 35%,transparent)}
+.ph-title{flex:1 1 320px;min-width:0}
+.arc{font-size:.72rem;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:var(--pc)}
+.ph-title h3{font-size:clamp(1.25rem,2.4vw,1.6rem);margin-top:4px}
+.ph-meta{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.ph-meta .chip{border-color:#EFE7DB}
+.chip.hours{background:var(--pcs);border-color:transparent;color:var(--pc)}
+.chip.pct{background:#1E1B2E;color:#fff;border-color:#1E1B2E;min-width:58px;justify-content:center}
+.mission{color:#4A4463;margin-top:16px;font-size:.98rem;max-width:88ch}
+.boss{margin-top:16px;background:var(--pcs);border-left:4px solid var(--pc);border-radius:0 14px 14px 0;padding:12px 16px;font-size:.93rem;color:#3A3450}
+.boss b{color:#1E1B2E}
+.watch{margin-top:18px}
+.watch h4{font-size:.74rem;letter-spacing:.13em;text-transform:uppercase;color:#78718C;margin-bottom:8px}
+.watch ul{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.watch li{display:flex;flex-wrap:wrap;gap:8px;align-items:baseline;font-size:.9rem;background:#FCF7F0;border:1px solid #F2E9DC;border-radius:12px;padding:9px 12px}
+.watch li a{font-weight:800;text-decoration:none;color:#3A2E8C}
+.watch li a:hover{text-decoration:underline}
+.watch li span{color:#78718C;font-size:.78rem}
+.watch li span::before{content:"· ";color:#C0B7A8}
+
+.checks{display:grid;grid-template-columns:1fr 1fr;gap:6px 18px;margin-top:20px}
+.chk{display:flex;align-items:flex-start;gap:10px;padding:7px 8px;border-radius:10px;cursor:pointer;font-size:.925rem;color:#2E2942;transition:background .15s}
+.chk:hover{background:#FCF7F0}
+.chk input{appearance:none;-webkit-appearance:none;width:20px;height:20px;flex:0 0 20px;margin-top:2px;border:2px solid #D8CDBE;border-radius:6px;background:#fff;cursor:pointer;position:relative;transition:all .15s}
+.chk input:checked{border-color:var(--pc);background-color:var(--pc);background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6L9 17l-5-5'/%3E%3C/svg%3E");background-size:14px 14px;background-position:center;background-repeat:no-repeat}
+.chk input:checked + span{color:#9A93A8;text-decoration:line-through;text-decoration-color:#C9C1D4}
+.phase .bar{margin-top:18px;height:10px}
+.phase .bar > i{background:var(--pc)}
+.tip{margin-top:12px;font-size:.86rem;color:#6A6480;font-style:italic}
+body.hide-done .chk:has(input:checked){display:none}
+.phase.done{border-top-color:#27AE60}
+
+/* ---------- SCHEDULE ---------- */
+.sched{display:grid;grid-template-columns:1.15fr .85fr;gap:18px;align-items:start}
+.sched-row{display:grid;grid-template-columns:120px 1fr;gap:14px;padding:13px 0;border-bottom:1px dashed #EDE6DC}
+.sched-row:last-child{border-bottom:0}
+.sched-row .t{font-weight:900;font-size:.86rem;color:#B4512E;font-variant-numeric:tabular-nums}
+.sched-row b{display:block;font-size:.94rem}
+.sched-row span{font-size:.84rem;color:#6A6480}
+.day{display:flex;gap:12px;align-items:flex-start;padding:12px 0;border-bottom:1px dashed #EDE6DC}
+.day:last-child{border-bottom:0}
+.day .d{font-weight:900;min-width:86px;font-size:.9rem}
+.day .h{font-weight:800;color:#0E9F8A;font-size:.82rem;min-width:78px}
+.day p{font-size:.84rem;color:#5A5570}
+
+/* ---------- PROJECTS ---------- */
+.proj{position:relative;background:#fff;border:1px solid #EDE6DC;border-radius:20px;padding:20px;box-shadow:0 10px 26px rgba(30,27,46,.05);display:flex;flex-direction:column;gap:10px}
+.proj .lv{align-self:flex-start;font-size:.7rem;font-weight:900;letter-spacing:.12em;color:#fff;background:linear-gradient(120deg,#FF6B3D,#E0457B);border-radius:8px;padding:5px 9px}
+.proj h4{font-size:1.06rem}
+.proj .stack{font-size:.78rem;font-weight:800;color:#0E9F8A}
+.proj ul{margin:4px 0 0;padding-left:0;list-style:none;display:grid;gap:5px}
+.proj li{font-size:.86rem;color:#4A4463;padding-left:20px;position:relative}
+.proj li::before{content:"✓";position:absolute;left:0;color:#0E9F8A;font-weight:900}
+.proj .foot{margin-top:auto;display:flex;gap:6px;flex-wrap:wrap}
+.proj .foot .chip{font-size:.7rem;padding:5px 9px}
+.proj .proof{font-size:.82rem;color:#6A6480;background:#FCF7F0;border-radius:10px;padding:9px 11px}
+
+/* ---------- JOBS ---------- */
+.park{display:flex;gap:12px;align-items:flex-start}
+.park .ic{width:44px;height:44px;flex:0 0 44px;border-radius:14px;display:grid;place-items:center;font-size:22px;background:#F3EEFF}
+.park b{display:block}
+.park span{font-size:.82rem;color:#6A6480}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start}
+details{background:#fff;border:1px solid #EDE6DC;border-radius:14px;padding:0;overflow:hidden}
+details + details{margin-top:10px}
+summary{cursor:pointer;padding:14px 16px;font-weight:800;font-size:.94rem;list-style:none;display:flex;justify-content:space-between;gap:10px;align-items:center}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";font-size:1.2rem;color:#B4512E;font-weight:900}
+details[open] summary::after{content:"–"}
+details .body{padding:0 16px 16px;font-size:.9rem;color:#4A4463}
+.tmpl{background:#FCF7F0;border:1px dashed #E0D2BE;border-radius:12px;padding:12px 14px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.8rem;color:#3A3450;white-space:pre-wrap;line-height:1.5}
+ol.q{margin:0;padding-left:22px;color:#4A4463;font-size:.9rem}
+ol.q li{margin:9px 0}
+
+/* ---------- CHEATS ---------- */
+.kbd{display:inline-block;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.76rem;background:#1E1B2E;color:#FFF9F2;border-radius:6px;padding:3px 7px;box-shadow:0 2px 0 #0E0C1A;white-space:nowrap}
+.code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.8rem;color:#0B6B5C;background:#EAF7F3;border-radius:6px;padding:3px 7px;white-space:nowrap}
+.mini-table{min-width:0;width:100%;table-layout:fixed;font-size:.82rem;margin-top:8px}
+.mini-table td{overflow-wrap:anywhere;padding:9px 8px}
+.mini-table td:first-child{width:44%}
+.mini-table .code,.mini-table .kbd{white-space:normal;overflow-wrap:anywhere;font-size:.72rem;display:inline-block;line-height:1.35}
+
+/* ---------- RED TEAM ---------- */
+.rt{background:#fff;border:1px solid #EDE6DC;border-radius:18px;padding:18px 20px;box-shadow:0 10px 26px rgba(30,27,46,.05)}
+.rt .risk{font-size:.92rem;color:#3A3450;padding-left:26px;position:relative}
+.rt .risk::before{content:"⚠️";position:absolute;left:0;top:0}
+.rt .fix{margin-top:12px;font-size:.9rem;background:#EAF7EF;border-radius:12px;padding:11px 12px;color:#1F5B39;padding-left:36px;position:relative}
+.rt .fix::before{content:"✅";position:absolute;left:12px;top:11px}
+
+/* ---------- MOTIVATION ---------- */
+.banner{position:relative;border-radius:24px;overflow:hidden;box-shadow:0 22px 50px rgba(30,27,46,.18)}
+.banner img{width:100%;display:block;aspect-ratio:16/8;object-fit:cover}
+.banner .cap{position:absolute;inset:auto 0 0 0;padding:26px;background:linear-gradient(transparent,rgba(15,12,25,.86));color:#fff}
+.banner .cap b{display:block;font-size:clamp(1.1rem,2.4vw,1.6rem)}
+.banner .cap span{font-size:.86rem;color:#E3DBF1}
+.memes{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:18px}
+.meme{border-radius:18px;padding:18px;color:#1E1B2E;background:var(--pcs);border:1px solid #EDE6DC;display:flex;flex-direction:column;gap:10px;min-height:126px}
+.meme b{font-size:.95rem;line-height:1.45}
+.meme span{font-size:.7rem;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--pc);margin-top:auto}
+
+/* ---------- SOURCES / FOOTER ---------- */
+.src{columns:2;column-gap:28px;font-size:.86rem}
+.src a{display:block;margin-bottom:10px;break-inside:avoid;color:#4A4463}
+.foot{background:#1E1B2E;color:#D9D2EA;padding:40px 0;margin-top:30px}
+.foot .wrap{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;align-items:center}
+.foot b{color:#fff}
+.foot small{display:block;color:#A79FC0;margin-top:4px}
+.top{position:fixed;right:18px;bottom:18px;width:46px;height:46px;border-radius:50%;border:0;background:#1E1B2E;color:#fff;font-size:18px;cursor:pointer;box-shadow:0 10px 24px rgba(30,27,46,.3);opacity:0;pointer-events:none;transition:opacity .2s}
+.top.show{opacity:1;pointer-events:auto}
+
+@media (max-width:960px){
+  .hero-grid{grid-template-columns:1fr}
+  .anime-3{grid-template-columns:1fr 1fr}
+  .arc-divider{grid-template-columns:1fr}
+  .arc-divider img{max-height:220px;width:100%;object-position:center 30%}
+  .g3{grid-template-columns:1fr 1fr}
+  .sched{grid-template-columns:1fr}
+  .two{grid-template-columns:1fr}
+  .memes{grid-template-columns:1fr 1fr}
+}
+@media (max-width:720px){
+  section{padding:40px 0;scroll-margin-top:116px}
+  .nav .wrap{height:auto;flex-wrap:wrap;padding:9px 0 4px;row-gap:2px}
+  .nav-links{order:3;width:100%;flex:0 0 100%;margin:2px 0 0;padding-bottom:2px;flex-wrap:wrap;overflow:visible;row-gap:3px}
+  .nav-links a{padding:6px 9px;font-size:.78rem}
+  .anime-3{grid-template-columns:1fr}
+  .anime-card .pic{height:240px}
+  .meme-strip img,.meme-strip.levi img{aspect-ratio:16/10}
+  .checks{grid-template-columns:1fr}
+  .g3,.g2{grid-template-columns:1fr}
+  .src{columns:1}
+  .nav .wrap{height:58px}
+  .nav-progress{display:none}
+  .badge{width:46px;height:46px;flex:0 0 46px;border-radius:14px;font-size:1rem}
+  .phase{padding:18px}
+  .banner img{aspect-ratio:16/10}
+}
+@media (max-width:700px){
+  .card > table{display:block;overflow-x:auto;max-width:100%}
+}
+@media (max-width:520px){
+  .memes{grid-template-columns:1fr}
+  .kbd,.code{white-space:normal}
+  .sched-row{grid-template-columns:96px 1fr}
+  .cta-row .btn{width:100%;justify-content:center}
+}
+@media print{
+  .nav,.top,.toolbar,.cta-row,.hero-art .art-tag{display:none}
+  body{background:#fff}
+  body::before{display:none}
+  section{padding:18px 0;break-inside:avoid}
+  .phase,.card,.proj,.rt,.banner{box-shadow:none;break-inside:avoid}
+  .banner img{display:none}
+  .banner{background:#F3EEFF;padding:18px}
+  .banner .cap{position:static;background:none;color:#1E1B2E}
+  .banner .cap span{color:#5A5570}
+  details{display:block}
+}
+
+
+/* ---------- MULTI-PAGE ESSENTIALS ---------- */
+.nav-links a.active {
+  background: #1E1B2E !important;
+  color: #FFF9F2 !important;
+}
+
+.page-intro-banner {
+  padding: 38px 0 20px;
+  border-bottom: 1px solid #EDE6DC;
+  margin-bottom: 24px;
+}
+.page-intro-banner .kicker {
+  font-size: .78rem;
+  font-weight: 900;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: #B4512E;
+  margin-bottom: 8px;
+}
+.page-intro-banner h1 {
+  font-size: clamp(2rem, 3.8vw, 2.9rem);
+  font-weight: 900;
+  margin: 0 0 10px;
+  color: #1E1B2E;
+}
+.page-intro-banner .sub {
+  color: #5A5570;
+  font-size: 1.08rem;
+  max-width: 80ch;
+  line-height: 1.6;
+  margin-top: 6px;
+}
+
+.next-step-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  background: #fff;
+  border: 1px solid #EDE6DC;
+  border-radius: 22px;
+  padding: 22px 28px;
+  box-shadow: 0 12px 32px rgba(30, 27, 46, .06);
+  margin: 50px 0 20px;
+  flex-wrap: wrap;
+}
+.ns-info {
+  flex: 1 1 300px;
+}
+.ns-info h4 {
+  font-size: 1.15rem;
+  margin: 4px 0 6px;
+  color: #1E1B2E;
+}
+.ns-info p {
+  color: #5A5570;
+  font-size: .92rem;
+  margin: 0;
+}
+.ns-label {
+  font-size: .72rem;
+  font-weight: 900;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: #B4512E;
+}
+.ns-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+/* Directory / Hub Grid on Overview page */
+.hub-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 18px;
+  margin-top: 24px;
+}
+.hub-card {
+  background: #fff;
+  border: 1px solid #EDE6DC;
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: 0 10px 26px rgba(30, 27, 46, .05);
+  display: flex;
+  flex-direction: column;
+  text-decoration: none;
+  color: inherit;
+  transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+  position: relative;
+  overflow: hidden;
+}
+.hub-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 18px 40px rgba(30, 27, 46, .10);
+  border-color: #D8CDBE;
+}
+.hub-card-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.hub-icon {
+  font-size: 24px;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: #F8F3EC;
+  display: grid;
+  place-items: center;
+  flex: 0 0 44px;
+}
+.hub-card h3 {
+  font-size: 1.15rem;
+  margin: 0;
+  color: #1E1B2E;
+}
+.hub-card p {
+  font-size: .88rem;
+  color: #5A5570;
+  margin: 0 0 16px;
+  flex-grow: 1;
+  line-height: 1.5;
+}
+.hub-link {
+  font-size: .84rem;
+  font-weight: 800;
+  color: #6C4CE0;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: auto;
+}
+.hub-card:hover .hub-link {
+  text-decoration: underline;
+}
+
+.copy-btn {
+  font-family: inherit;
+  font-size: .78rem;
+  font-weight: 800;
+  background: #1E1B2E;
+  color: #fff;
+  border: 0;
+  border-radius: 8px;
+  padding: 6px 12px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: background .15s;
+  margin-top: 10px;
+}
+.copy-btn:hover {
+  background: #3A3450;
+}
+.copy-btn.copied {
+  background: #0E9F8A;
+}
+
+/* Nav Actions Container */
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 0 0 auto;
+}
+.nav-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 11px;
+  border-radius: 999px;
+  font-family: inherit;
+  font-size: .8rem;
+  font-weight: 700;
+  cursor: pointer;
+  background: #FFF;
+  border: 1px solid #EDE6DC;
+  color: #3A3450;
+  transition: all .15s ease;
+}
+.nav-icon-btn:hover {
+  background: #F4ECE2;
+  color: #1E1B2E;
+}
+
+/* ---------- DARK MODE THEME ---------- */
+html.dark {
+  color-scheme: dark;
+}
+html.dark body {
+  background: #0D0A14 !important;
+  color: #EDE8F5 !important;
+}
+html.dark body::before {
+  background:
+    radial-gradient(900px 600px at 8% -5%, rgba(255,107,61,.18), transparent 60%),
+    radial-gradient(800px 600px at 100% 8%, rgba(124,92,255,.22), transparent 60%),
+    radial-gradient(900px 700px at 50% 110%, rgba(14,159,138,.16), transparent 60%) !important;
+}
+html.dark a {
+  color: #A78BFA;
+}
+html.dark .nav {
+  background: rgba(13,10,20,.94) !important;
+  border-bottom-color: #272036 !important;
+}
+html.dark .logo {
+  color: #EDE8F5 !important;
+}
+html.dark .nav-links a {
+  color: #B8ADC9;
+}
+html.dark .nav-links a:hover {
+  background: #251D36;
+  color: #FFF;
+}
+html.dark .nav-links a.active {
+  background: #7C5CFF !important;
+  color: #FFF !important;
+}
+html.dark .nav-progress .mini {
+  background: #272036;
+}
+html.dark .card,
+html.dark .panel,
+html.dark .phase,
+html.dark .proj,
+html.dark .rt,
+html.dark .hub-card,
+html.dark details,
+html.dark .iq-card {
+  background: #171322 !important;
+  border-color: #2D253F !important;
+  color: #EDE8F5 !important;
+  box-shadow: 0 10px 28px rgba(0,0,0,.35);
+}
+html.dark .hub-icon {
+  background: #231B33 !important;
+}
+html.dark .hub-card h3 {
+  color: #EDE8F5 !important;
+}
+html.dark .hub-card p,
+html.dark .card p,
+html.dark .proj p,
+html.dark .mission,
+html.dark .sub,
+html.dark .lede {
+  color: #ADA4C2 !important;
+}
+html.dark .chip {
+  background: #201A30 !important;
+  border-color: #342A4D !important;
+  color: #D3C9E6 !important;
+}
+html.dark .chip.solid {
+  background: #7C5CFF !important;
+  border-color: #7C5CFF !important;
+  color: #FFF !important;
+}
+html.dark .btn-ghost {
+  background: #1D172B !important;
+  color: #EDE8F5 !important;
+  border-color: #382E52 !important;
+}
+html.dark .btn-ghost:hover {
+  background: #2A213D !important;
+}
+html.dark .boss {
+  background: rgba(40,30,60,.5) !important;
+  color: #DCD4ED !important;
+}
+html.dark .boss b {
+  color: #FFF !important;
+}
+html.dark .watch li {
+  background: #1D172B !important;
+  border-color: #2D253F !important;
+}
+html.dark .watch li a {
+  color: #C4B5FD !important;
+}
+html.dark .watch li span {
+  color: #9A8FAE !important;
+}
+html.dark .chk:hover {
+  background: #221B33 !important;
+}
+html.dark .chk input {
+  background: #171322 !important;
+  border-color: #4A3E6B !important;
+}
+html.dark .chk input:checked + span {
+  color: #6C6285 !important;
+  text-decoration-color: #554C6E !important;
+}
+html.dark .chk span {
+  color: #E2DBEE !important;
+}
+html.dark .bar {
+  background: #272036 !important;
+}
+html.dark .tool-btn {
+  background: #1D172B !important;
+  border-color: #382D54 !important;
+  color: #EDE8F5 !important;
+}
+html.dark .tool-btn:hover {
+  background: #2D2345 !important;
+}
+html.dark .table-wrap {
+  background: #171322 !important;
+  border-color: #2D253F !important;
+}
+html.dark th {
+  background: #1F192E !important;
+  color: #B5AACC !important;
+  border-bottom-color: #2D253F !important;
+}
+html.dark td {
+  border-bottom-color: #251E36 !important;
+  color: #EDE8F5 !important;
+}
+html.dark tr:hover td {
+  background: #221B33 !important;
+}
+html.dark .note {
+  background: linear-gradient(120deg, rgba(14,159,138,.12), rgba(124,92,255,.14)) !important;
+  border-color: #2F3E48 !important;
+}
+html.dark .note ul {
+  color: #D5CDE4 !important;
+}
+html.dark .next-step-bar {
+  background: #171322 !important;
+  border-color: #2D253F !important;
+  color: #EDE8F5 !important;
+}
+html.dark .tmpl {
+  background: #120E1C !important;
+  border-color: #382D54 !important;
+  color: #E3DCF0 !important;
+}
+html.dark .rt .fix {
+  background: rgba(33,150,83,.16) !important;
+  color: #6EE7B7 !important;
+}
+html.dark .proj .proof {
+  background: #1D172B !important;
+  color: #C5BBDC !important;
+}
+html.dark .page-intro-banner {
+  border-bottom-color: #2D253F !important;
+}
+html.dark .page-intro-banner h1 {
+  color: #EDE8F5 !important;
+}
+html.dark .foot {
+  background: #0A0812 !important;
+  border-top: 1px solid #201A30 !important;
+}
+html.dark .copy-btn {
+  background: #7C5CFF !important;
+}
+html.dark .copy-btn:hover {
+  background: #6C4CE0 !important;
+}
+html.dark .sched-row {
+  border-bottom-color: #2D253F !important;
+}
+html.dark .day {
+  border-bottom-color: #2D253F !important;
+}
+html.dark .day p {
+  color: #ADA4C2 !important;
+}
+html.dark .eyebrow {
+  background: #171322 !important;
+  border-color: #2D253F !important;
+  color: #D5CDE4 !important;
+}
+html.dark .top {
+  background: #7C5CFF !important;
+  color: #FFF !important;
+}
+html.dark .nav-icon-btn {
+  background: #1D172B !important;
+  border-color: #342A4D !important;
+  color: #EDE8F5 !important;
+}
+html.dark .nav-icon-btn:hover {
+  background: #281F3B !important;
+}
+
+/* ---------- INTERVIEW Q&A CARDS & ACCORDION ---------- */
+.iq-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 24px;
+  background: #FFF;
+  border: 1px solid #EDE6DC;
+  border-radius: 20px;
+  padding: 18px 20px;
+  box-shadow: 0 8px 24px rgba(30,27,46,.04);
+}
+html.dark .iq-controls {
+  background: #171322;
+  border-color: #2D253F;
+}
+.iq-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.iq-filter-btn {
+  font-family: inherit;
+  font-size: .8rem;
+  font-weight: 700;
+  padding: 6px 13px;
+  border-radius: 999px;
+  border: 1px solid #EDE6DC;
+  background: #F8F3EC;
+  color: #4A4463;
+  cursor: pointer;
+  transition: all .15s ease;
+}
+.iq-filter-btn:hover {
+  background: #F1EAE0;
+  color: #1E1B2E;
+}
+.iq-filter-btn.active {
+  background: #1E1B2E;
+  color: #FFF;
+  border-color: #1E1B2E;
+}
+html.dark .iq-filter-btn {
+  background: #1F192E;
+  border-color: #352B4E;
+  color: #C5BADB;
+}
+html.dark .iq-filter-btn:hover {
+  background: #2A213D;
+  color: #FFF;
+}
+html.dark .iq-filter-btn.active {
+  background: #7C5CFF;
+  border-color: #7C5CFF;
+  color: #FFF;
+}
+.iq-search-input {
+  width: 100%;
+  max-width: 380px;
+  font-family: inherit;
+  font-size: .85rem;
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1px solid #EDE6DC;
+  background: #FDFBF7;
+  color: inherit;
+  outline: 0;
+}
+html.dark .iq-search-input {
+  background: #1A1527;
+  border-color: #352B4E;
+  color: #EDE8F5;
+}
+.iq-card {
+  background: #FFF;
+  border: 1px solid #EDE6DC;
+  border-radius: 18px;
+  padding: 20px 22px;
+  margin-bottom: 16px;
+  box-shadow: 0 8px 24px rgba(30,27,46,.04);
+  transition: border-color .15s, box-shadow .15s;
+}
+.iq-card.mastered {
+  border-left: 5px solid #0E9F8A !important;
+}
+.iq-card-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  cursor: pointer;
+}
+.iq-q-title {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #1E1B2E;
+  margin: 4px 0 0;
+  line-height: 1.4;
+}
+html.dark .iq-q-title {
+  color: #EDE8F5;
+}
+.iq-badges {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+.iq-badge {
+  font-size: .68rem;
+  font-weight: 900;
+  letter-spacing: .08em;
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: #F3EEFF;
+  color: #5B3BBF;
+}
+html.dark .iq-badge {
+  background: #2D2345;
+  color: #C4B5FD;
+}
+.iq-num {
+  font-size: .72rem;
+  font-weight: 800;
+  color: #78718C;
+}
+.iq-toggle-btn {
+  font-family: inherit;
+  font-size: .76rem;
+  font-weight: 800;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid #EDE6DC;
+  background: #FCF7F0;
+  color: #B4512E;
+  cursor: pointer;
+  white-space: nowrap;
+  flex: 0 0 auto;
+}
+html.dark .iq-toggle-btn {
+  background: #251D36;
+  border-color: #382D52;
+  color: #FF9E7A;
+}
+.iq-body {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px dashed #EDE6DC;
+  display: none;
+}
+html.dark .iq-body {
+  border-top-color: #2D253F;
+}
+.iq-body.open {
+  display: block;
+}
+.iq-ans {
+  font-size: .94rem;
+  line-height: 1.6;
+  color: #3A3450;
+  margin-bottom: 12px;
+}
+html.dark .iq-ans {
+  color: #D5CDE4;
+}
+.iq-code {
+  background: #171322;
+  color: #F0EAFB;
+  border-radius: 12px;
+  padding: 14px 16px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: .82rem;
+  line-height: 1.5;
+  overflow-x: auto;
+  margin: 12px 0;
+  border: 1px solid #2B2340;
+}
+html.dark .iq-code {
+  background: #0E0B16;
+  border-color: #272036;
+}
+.iq-code pre {
+  margin: 0;
+  white-space: pre;
+}
+.iq-trap {
+  background: #FFF7E3;
+  border-left: 4px solid #E39A00;
+  border-radius: 0 10px 10px 0;
+  padding: 10px 14px;
+  font-size: .86rem;
+  color: #5C4100;
+  margin-top: 12px;
+}
+html.dark .iq-trap {
+  background: rgba(227,154,0,.12);
+  border-left-color: #FFB020;
+  color: #FDE68A;
+}
+.iq-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 14px;
+  padding-top: 10px;
+  border-top: 1px solid #F4ECE2;
+  font-size: .78rem;
+}
+html.dark .iq-footer {
+  border-top-color: #221B33;
+}
+
+/* ---------- SEARCH MODAL & COMMAND PALETTE ---------- */
+.search-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 8, 18, .75);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 2000;
+  display: none;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 70px 16px 24px;
+}
+.search-backdrop.open {
+  display: flex;
+}
+.search-modal {
+  width: 100%;
+  max-width: 640px;
+  background: #FFF;
+  border: 1px solid #EDE6DC;
+  border-radius: 22px;
+  box-shadow: 0 24px 60px rgba(0,0,0,.35);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  max-height: 80vh;
+  animation: modalPop .15s ease-out;
+}
+@keyframes modalPop {
+  from { opacity: 0; transform: translateY(-12px) scale(.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+html.dark .search-modal {
+  background: #171322;
+  border-color: #382D52;
+  box-shadow: 0 24px 60px rgba(0,0,0,.65);
+}
+.search-head {
+  padding: 14px 18px;
+  border-bottom: 1px solid #EDE6DC;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+html.dark .search-head {
+  border-bottom-color: #2B2240;
+}
+.search-head input {
+  width: 100%;
+  border: 0;
+  outline: 0;
+  font-family: inherit;
+  font-size: 1.05rem;
+  font-weight: 600;
+  background: transparent;
+  color: inherit;
+}
+.search-kbd {
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  font-size: .72rem;
+  padding: 3px 6px;
+  border-radius: 6px;
+  background: #EDE6DC;
+  color: #4A4463;
+  white-space: nowrap;
+}
+html.dark .search-kbd {
+  background: #2A213D;
+  color: #B5AACC;
+}
+.search-results {
+  overflow-y: auto;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.search-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 11px 14px;
+  border-radius: 12px;
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+  transition: background .12s;
+}
+.search-item:hover, .search-item.selected {
+  background: #F4ECE2;
+}
+html.dark .search-item:hover, html.dark .search-item.selected {
+  background: #251D36;
+}
+.search-item-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.search-badge {
+  font-size: .68rem;
+  font-weight: 900;
+  letter-spacing: .08em;
+  padding: 2px 7px;
+  border-radius: 6px;
+  background: #EDE6DC;
+  color: #4A4463;
+}
+html.dark .search-badge {
+  background: #2D2345;
+  color: #C4B5FD;
+}
+.search-item b {
+  font-size: .95rem;
+}
+.search-item span {
+  font-size: .8rem;
+  color: #6A6480;
+}
+html.dark .search-item span {
+  color: #9C91B4;
+}
+.search-foot {
+  padding: 10px 16px;
+  border-top: 1px solid #EDE6DC;
+  font-size: .76rem;
+  color: #78718C;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(0,0,0,.02);
+}
+html.dark .search-foot {
+  border-top-color: #2B2240;
+  background: #120E1C;
+  color: #8C82A4;
+}
+
+/* ---------- POMODORO TIMER ---------- */
+.timer-widget {
+  position: fixed;
+  bottom: 22px;
+  left: 22px;
+  z-index: 900;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.timer-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: #1E1B2E;
+  color: #FFF;
+  border: 1.5px solid #3B2E58;
+  border-radius: 999px;
+  padding: 8px 14px;
+  font-family: inherit;
+  font-weight: 800;
+  font-size: .84rem;
+  cursor: pointer;
+  box-shadow: 0 10px 24px rgba(30,27,46,.25);
+  transition: transform .15s, background .15s;
+}
+html.dark .timer-toggle-btn {
+  background: #231B33;
+  border-color: #48366B;
+}
+.timer-toggle-btn:hover {
+  transform: translateY(-2px);
+}
+.timer-popup {
+  display: none;
+  background: #FFF;
+  border: 1px solid #EDE6DC;
+  border-radius: 20px;
+  padding: 18px 20px;
+  box-shadow: 0 20px 45px rgba(0,0,0,.22);
+  width: 270px;
+  margin-bottom: 12px;
+  animation: modalPop .15s ease-out;
+}
+html.dark .timer-popup {
+  background: #1A1527;
+  border-color: #352B4E;
+  color: #EDE8F5;
+  box-shadow: 0 20px 45px rgba(0,0,0,.55);
+}
+.timer-popup.open {
+  display: block;
+}
+.timer-modes {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 12px;
+}
+.timer-mode-btn {
+  flex: 1;
+  font-size: .72rem;
+  font-weight: 800;
+  padding: 5px 3px;
+  border-radius: 8px;
+  border: 1px solid #EDE6DC;
+  background: #F8F3EC;
+  color: #4A4463;
+  cursor: pointer;
+  text-align: center;
+}
+html.dark .timer-mode-btn {
+  background: #221B33;
+  border-color: #352B4E;
+  color: #C5BADB;
+}
+.timer-mode-btn.active {
+  background: #1E1B2E;
+  color: #FFF;
+  border-color: #1E1B2E;
+}
+html.dark .timer-mode-btn.active {
+  background: #7C5CFF;
+  border-color: #7C5CFF;
+}
+.timer-digits {
+  font-size: 2.5rem;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  margin: 6px 0 12px;
+  color: #1E1B2E;
+}
+html.dark .timer-digits {
+  color: #EDE8F5;
+}
+.timer-ctrls {
+  display: flex;
+  gap: 8px;
+}
+.timer-ctrl-btn {
+  flex: 1;
+  font-family: inherit;
+  font-weight: 800;
+  font-size: .82rem;
+  padding: 8px;
+  border-radius: 10px;
+  border: 0;
+  cursor: pointer;
+  transition: opacity .15s;
+}
+.timer-ctrl-btn:hover {
+  opacity: .9;
+}
+.timer-start {
+  background: #0E9F8A;
+  color: #FFF;
+}
+.timer-pause {
+  background: #E39A00;
+  color: #FFF;
+}
+.timer-reset {
+  background: #EDE6DC;
+  color: #3A3450;
+}
+html.dark .timer-reset {
+  background: #2A213D;
+  color: #C5BADB;
+}
+
+/* ============================================================
+   FIT-TO-ALL-SCREENS RESPONSIVE ARCHITECTURE
+   ============================================================ */
+html {
+  box-sizing: border-box;
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+  overflow-x: hidden;
+}
+*, *::before, *::after {
+  box-sizing: inherit;
+}
+body {
+  overflow-x: hidden;
+  width: 100%;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+}
+img, svg, video, iframe {
+  max-width: 100%;
+  height: auto;
+}
+.wrap {
+  width: 100%;
+  max-width: 1220px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+.table-wrap {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border-radius: 16px;
+  position: relative;
+}
+.grid > *, .two > *, .sched > *, .hub-grid > *, .anime-3 > *, .memes > * {
+  min-width: 0;
+}
+
+@media (max-width: 1180px) {
+  .nav-links a {
+    padding: 6px 9px;
+    font-size: .78rem;
+  }
+  .nav .wrap {
+    gap: 10px;
+  }
+}
+
+@media (max-width: 1024px) {
+  .hero-grid {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+  .hero-art {
+    max-width: 600px;
+    margin: 0 auto;
+  }
+  .g3 {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+  .sched {
+    grid-template-columns: 1fr !important;
+  }
+  .two {
+    grid-template-columns: 1fr !important;
+  }
+  .anime-3 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .arc-divider {
+    grid-template-columns: 240px 1fr;
+    gap: 18px;
+    padding: 18px;
+  }
+}
+
+@media (max-width: 940px) {
+  .nav .wrap {
+    height: auto;
+    padding: 10px 20px 8px;
+    flex-wrap: wrap;
+    row-gap: 8px;
+  }
+  .nav-links {
+    order: 3;
+    width: 100%;
+    flex: 0 0 100%;
+    margin: 0;
+    padding: 2px 0 4px;
+    display: flex;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    gap: 6px;
+  }
+  .nav-links::-webkit-scrollbar {
+    display: none;
+  }
+  .nav-links a {
+    flex: 0 0 auto;
+  }
+}
+
+@media (max-width: 768px) {
+  .wrap {
+    padding: 0 16px !important;
+  }
+  section {
+    padding: 38px 0 !important;
+  }
+  .nav .wrap {
+    height: auto !important;
+    padding: 10px 14px 8px !important;
+    flex-wrap: wrap !important;
+    row-gap: 8px !important;
+  }
+  .nav-progress {
+    display: flex !important;
+    margin-left: auto;
+    font-size: .74rem;
+  }
+  .nav-progress .mini {
+    width: 44px;
+    flex: 0 0 44px;
+  }
+  .nav-links {
+    order: 3;
+    width: 100%;
+    flex: 0 0 100%;
+    margin: 0 !important;
+    padding: 2px 2px 6px !important;
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    gap: 6px !important;
+    scroll-snap-type: x mandatory;
+  }
+  .nav-links::-webkit-scrollbar {
+    display: none;
+  }
+  .nav-links a {
+    padding: 6px 12px !important;
+    font-size: .8rem !important;
+    flex: 0 0 auto !important;
+    border-radius: 999px !important;
+    scroll-snap-align: start;
+  }
+  .hero {
+    padding: 24px 0 16px !important;
+  }
+  .hero-grid {
+    gap: 24px !important;
+  }
+  h1 {
+    font-size: clamp(1.8rem, 5.5vw, 2.5rem) !important;
+  }
+  .lede {
+    font-size: .98rem !important;
+  }
+  .cta-row .btn {
+    width: 100% !important;
+    justify-content: center !important;
+  }
+  .hub-grid {
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 14px !important;
+  }
+  .g3, .g2 {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+  .anime-3 {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+  .anime-card .pic {
+    height: 220px !important;
+  }
+  .arc-divider {
+    grid-template-columns: minmax(0, 1fr) !important;
+    padding: 16px !important;
+  }
+  .arc-divider img {
+    max-height: 200px !important;
+    width: 100% !important;
+  }
+  .meme-strip img, .meme-strip.levi img {
+    aspect-ratio: 16/10 !important;
+  }
+  .next-step-bar {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    padding: 20px !important;
+    gap: 16px !important;
+    margin: 32px 0 16px !important;
+  }
+  .ns-actions {
+    flex-direction: column !important;
+    width: 100% !important;
+    gap: 10px !important;
+  }
+  .ns-actions .btn {
+    width: 100% !important;
+    justify-content: center !important;
+  }
+  .toolbar {
+    gap: 8px !important;
+    justify-content: flex-start !important;
+  }
+  .toolbar .spacer {
+    display: none !important;
+  }
+  .tool-btn {
+    font-size: .78rem !important;
+    padding: 7px 12px !important;
+  }
+  .checks {
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 4px !important;
+  }
+  .chk {
+    padding: 9px 8px !important;
+    font-size: .88rem !important;
+  }
+  .phase {
+    padding: 16px !important;
+    border-radius: 18px !important;
+  }
+  .phase-head {
+    gap: 12px !important;
+  }
+  .badge {
+    width: 44px !important;
+    height: 44px !important;
+    flex: 0 0 44px !important;
+    border-radius: 12px !important;
+    font-size: 1rem !important;
+  }
+  .memes {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+  .src {
+    columns: 1 !important;
+  }
+  .sched-row {
+    grid-template-columns: 90px 1fr !important;
+    gap: 10px !important;
+  }
+  .iq-controls {
+    padding: 14px 16px;
+  }
+  .iq-card {
+    padding: 16px 18px;
+  }
+}
+
+@media (max-width: 400px) {
+  .wrap {
+    padding: 0 12px !important;
+  }
+  .logo {
+    font-size: .88rem !important;
+    gap: 6px !important;
+  }
+  .logo .dot {
+    width: 28px !important;
+    height: 28px !important;
+    font-size: 14px !important;
+  }
+  .sched-row {
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 4px !important;
+  }
+  .sched-row .t {
+    display: inline-block !important;
+    margin-bottom: 2px !important;
+  }
+  .day {
+    flex-direction: column !important;
+    gap: 3px !important;
+  }
+  .day .d, .day .h {
+    min-width: 0 !important;
+  }
+  .mini-table td {
+    padding: 8px 4px !important;
+  }
+  .mini-table td:first-child {
+    width: 48% !important;
+  }
+  .kbd, .code {
+    white-space: normal !important;
+    overflow-wrap: anywhere !important;
+    font-size: .72rem !important;
+  }
+  .art-tag {
+    position: static !important;
+    margin-top: 10px !important;
+    border-radius: 12px !important;
+  }
+}
+
+@media (min-width: 1600px) {
+  .wrap {
+    max-width: 1320px;
+  }
+  body {
+    font-size: 1.05rem;
+  }
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#main-content">Skip to content</a>
+
+<header class="nav">
+  <div class="wrap">
+    <a class="logo" href="index.html"><span class="dot">⚡</span> Operation Full Stack</a>
+    <nav class="nav-links" aria-label="Sections">
+      <a href="index.html" class="">Overview</a>
+      <a href="market.html" class="">Market</a>
+      <a href="roadmap.html" class="">Roadmap</a>
+      <a href="schedule.html" class="">Schedule</a>
+      <a href="projects.html" class="">Projects</a>
+      <a href="jobs.html" class="">Job hunt</a>
+      <a href="interviews.html" class="">Interviews</a>
+      <a href="cheats.html" class="">Cheat sheets</a>
+      <a href="review.html" class="active">Review</a>
+    </nav>
+    <div class="nav-actions">
+      <button class="nav-icon-btn" id="searchTrigger" type="button" title="Search all topics, courses, questions (Ctrl + K)">
+        🔍 <span class="search-kbd">Ctrl+K</span>
+      </button>
+      <button class="nav-icon-btn" id="themeToggle" type="button" aria-label="Toggle dark mode" title="Toggle dark mode (D)">
+        🌙
+      </button>
+      <div class="nav-progress" aria-hidden="true" title="Your overall roadmap progress">
+        <span id="nav-pct-label">0%</span>
+        <span class="mini"><i id="nav-fill"></i></span>
+      </div>
+    </div>
+  </div>
+</header>
+<main id="main-content">
+<section id="review">
+    <div class="wrap">
+      <div class="sec-head">
+        <div class="kicker">Peer review · red-team pass</div>
+        <h2>I had a second agent try to destroy this plan</h2>
+        <p class="sub">Before shipping, I ran the plan through a hostile review whose only job was to find why it fails. These were the seven hits — and the fixes baked into the roadmap above.</p>
+      </div>
+      <div class="grid g2">
+        <div class="rt">
+          <p class="risk">You are trying to learn MERN + Python + Power BI + DSA in 6 months. That is how people burn out at month 3.</p>
+          <p class="fix">Sequence, don&#x27;t parallelise. Python and Power BI are locked until the capstone ships. DSA is only 45 min/day.</p>
+        </div>
+
+        <div class="rt">
+          <p class="risk">Kerala&#x27;s market is service-heavy: many Infopark JDs ask Java/Spring + Angular, not MERN.</p>
+          <p class="fix">Keep MERN as your primary (fastest given your JS base), add Python/Django basics for Kerala JDs, and learn Java in year 2 if you target enterprise.</p>
+        </div>
+
+        <div class="rt">
+          <p class="risk">Tutorial hell is the #1 killer. Watching 22 hours of JS while typing nothing feels productive.</p>
+          <p class="fix">70/30 rule: 70% of study time is building. Every video must end with the tab closed and code written from memory.</p>
+        </div>
+
+        <div class="rt">
+          <p class="risk">If you learn React before backend, you risk becoming a &#x27;card designer&#x27; who freezes when asked about auth or databases.</p>
+          <p class="fix">Frontend first is fine, but your API must be live by week 12. Backend is where fresher offers are won.</p>
+        </div>
+
+        <div class="rt">
+          <p class="risk">Applying only in Kerala shrinks the pool to a few hundred roles and depresses your first salary.</p>
+          <p class="fix">Apply 70% Kerala (Infopark/Technopark/Cyberpark) + 30% Bengaluru/Chennai/Hyderabad/remote. Same effort, 5× the market.</p>
+        </div>
+
+        <div class="rt">
+          <p class="risk">DSA can eat your entire life and delay shipping.</p>
+          <p class="fix">150 curated problems, not 500. Patterns over volume. Stop DSA prep the week you have 3 interviews.</p>
+        </div>
+
+        <div class="rt">
+          <p class="risk">Your current internship is being wasted if you only do frontend tickets.</p>
+          <p class="fix">Ask your lead for one backend task, one bug-fix sprint, and one code review. Then put the measurable outcome on your resume.</p>
+        </div></div>
+    </div>
+  </section>
+<section id="sources">
+    <div class="wrap">
+      <div class="sec-head">
+        <div class="kicker">Due diligence</div>
+        <h2>Sources &amp; further reading</h2>
+        <p class="sub">Salary ranges are directional, not guarantees — always sanity-check against live listings and offers. Verified as of October 2026.</p>
+      </div>
+      <div class="src"><a href="https://taggd.in/blogs/full-stack-developer-hiring-india/" target="_blank" rel="noopener">↗ Full-Stack Developer Hiring in India 2026 — role demand &amp; NASSCOM context</a>
+<a href="https://tutorac.com/blogs/reactjs-angular-node-js/react-vs-angular-2026/" target="_blank" rel="noopener">↗ React vs Angular 2026 — India job counts &amp; salaries</a>
+<a href="https://www.nucamp.co/blog/most-in-demand-full-stack-skills-in-2026-react-node-typescript-and-beyond" target="_blank" rel="noopener">↗ Most in-demand full-stack skills 2026 — TypeScript/React/Node adoption</a>
+<a href="https://vtricks.in/salary/full-stack-developer-salary-kochi.html" target="_blank" rel="noopener">↗ Full-stack developer salary in Kochi 2026</a>
+<a href="https://requirehire.com/blog/web-developer-jobs-for-freshers-in-india-2026-complete-guide-employer-insight" target="_blank" rel="noopener">↗ Web developer jobs for freshers in India 2026 — salary bands</a>
+<a href="https://infopark.in/companies-job" target="_blank" rel="noopener">↗ Infopark live company job board</a>
+<a href="https://infopark.in/company-jobs/129" target="_blank" rel="noopener">↗ Infopark fresher opening — Python + React full-stack</a>
+<a href="https://www.technopark.org" target="_blank" rel="noopener">↗ Technopark Trivandrum — park &amp; company info</a>
+<a href="https://codegnan.com/blogs/full-stack-developer-salary-in-india/" target="_blank" rel="noopener">↗ Full-stack developer salary in India 2026 (stack comparison)</a>
+<a href="https://resumevera.com/in/salary-guide/react-developer" target="_blank" rel="noopener">↗ React developer salary &amp; skills premium in India 2026</a></div>
+      <div class="note" style="margin-top:18px">
+        <h4>A note on honesty</h4>
+        <ul>
+          <li>All YouTube videos, playlists and PDFs above were checked to exist when this page was built. Playlists get updated — the channel name is your fallback.</li>
+          <li>Salary figures come from job boards, salary aggregators and 2026 hiring reports, which vary wildly. Use them to negotiate a range, not to fix an expectation.</li>
+          <li>This is a plan, not a guarantee. What actually moves the needle: shipped projects, referrals, and interviews.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+<div class="wrap">
+  <div class="next-step-bar">
+    <div class="ns-info">
+      <span class="ns-label">Arc Completed</span>
+      <h4>Ready to begin Season 1?</h4>
+      <p>Return to the Overview or jump straight into Week 1 in the Roadmap.</p>
+    </div>
+    <div class="ns-actions">
+      <a href="index.html" class="btn btn-ghost">← Overview</a>
+      <a href="roadmap.html" class="btn btn-primary">Start Season 1 →</a>
+    </div>
+  </div>
+</div>
+</main>
+
+<!-- Pomodoro Study Timer -->
+<div class="timer-widget" id="timerWidget">
+  <div class="timer-popup" id="timerPopup">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+      <b style="font-size:.84rem;letter-spacing:.06em;text-transform:uppercase">⏱️ Focus Session</b>
+      <button id="timerCloseBtn" style="background:none;border:0;cursor:pointer;font-size:16px;color:#78718C">✕</button>
+    </div>
+    <div class="timer-modes">
+      <button class="timer-mode-btn active" data-time="1500">25m Pomodoro</button>
+      <button class="timer-mode-btn" data-time="3000">50m Deep</button>
+      <button class="timer-mode-btn" data-time="300">5m Rest</button>
+      <button class="timer-mode-btn" data-time="900">15m Break</button>
+    </div>
+    <div class="timer-digits" id="timerDigits">25:00</div>
+    <div class="timer-ctrls">
+      <button class="timer-ctrl-btn timer-start" id="timerStartBtn">▶ Start</button>
+      <button class="timer-ctrl-btn timer-reset" id="timerResetBtn">↺ Reset</button>
+    </div>
+  </div>
+  <button class="timer-toggle-btn" id="timerToggleBtn" type="button" title="Pomodoro focus timer">
+    <span>⏱️</span> <span id="timerBadge">25:00</span>
+  </button>
+</div>
+
+<!-- Search & Command Palette Modal -->
+<div class="search-backdrop" id="searchBackdrop">
+  <div class="search-modal" role="dialog" aria-modal="true" aria-label="Search Roadmap">
+    <div class="search-head">
+      <span style="font-size:18px">🔍</span>
+      <input type="text" id="searchInput" placeholder="Search 300+ topics, courses, questions, tools..." autocomplete="off">
+      <span class="search-kbd">Esc</span>
+    </div>
+    <div class="search-results" id="searchResults">
+      <!-- Injected via JS -->
+    </div>
+    <div class="search-foot">
+      <span><b>↑↓</b> to navigate</span>
+      <span><b>↵</b> to select</span>
+      <span><b>Esc</b> to close</span>
+    </div>
+  </div>
+</div>
+
+<footer class="foot">
+  <div class="wrap">
+    <div>
+      <b>Operation Full Stack · Kerala Edition</b>
+      <small>Built for a future full-stack developer in Kerala · October 2026</small>
+    </div>
+    <div style="text-align:right">
+      <b>148 checkpoints · 9 seasons · 80 interview Q&amp;As</b>
+      <small>Multi-page offline-first edition</small>
+    </div>
+  </div>
+</footer>
+<button class="top" id="toTop" type="button" aria-label="Back to top">↑</button>
+
+<script>
+(function(){
+  var KEY = 'fs-kerala-progress-v1';
+  var THEME_KEY = 'fs-theme';
+  var ALL_IDS = ["p1-1","p1-2","p1-3","p1-4","p1-5","p1-6","p1-7","p1-8","p1-9","p1-10","p1-11","p1-12","p1-13","p1-14","p1-15","p1-16","p2-1","p2-2","p2-3","p2-4","p2-5","p2-6","p2-7","p2-8","p2-9","p2-10","p2-11","p2-12","p2-13","p2-14","p2-15","p2-16","p2-17","p2-18","p3-1","p3-2","p3-3","p3-4","p3-5","p3-6","p3-7","p3-8","p3-9","p3-10","p3-11","p3-12","p3-13","p3-14","p3-15","p3-16","p4-1","p4-2","p4-3","p4-4","p4-5","p4-6","p4-7","p4-8","p4-9","p4-10","p4-11","p4-12","p4-13","p4-14","p4-15","p4-16","p4-17","p4-18","p4-19","p5-1","p5-2","p5-3","p5-4","p5-5","p5-6","p5-7","p5-8","p5-9","p5-10","p5-11","p5-12","p5-13","p5-14","p5-15","p5-16","p6-1","p6-2","p6-3","p6-4","p6-5","p6-6","p6-7","p6-8","p6-9","p6-10","p6-11","p6-12","p6-13","p6-14","p6-15","p6-16","p6-17","p7-1","p7-2","p7-3","p7-4","p7-5","p7-6","p7-7","p7-8","p7-9","p7-10","p7-11","p7-12","p7-13","p7-14","p7-15","p7-16","p7-17","p7-18","p7-19","p7-20","p8-1","p8-2","p8-3","p8-4","p8-5","p8-6","p8-7","p8-8","p8-9","p8-10","p9-1","p9-2","p9-3","p9-4","p9-5","p9-6","p9-7","p9-8","p9-9","p9-10","p9-11","p9-12","p9-13","p9-14","p9-15","p9-16"];
+  var TOTAL = ALL_IDS.length;
+  var SEARCH_DATA = [{"cat":"Season","badge":"🗺️ Roadmap","title":"🎮 ACADEMY ARC · Week 1–2 — Setup, Git &amp; HTML/CSS Pro","sub":"Boss: A responsive 3-page portfolio site, deployed live, with 10+ GitHub commits and a real pull request.","url":"roadmap.html#phase-1"},{"cat":"Season","badge":"🗺️ Roadmap","title":"⚡ CHAKRA CONTROL ARC · Week 3–7 — JavaScript Deep Dive","sub":"Boss: 3 vanilla JS apps deployed: Todo (localStorage), Weather (live API), Quiz (timer + score).","url":"roadmap.html#phase-2"},{"cat":"Season","badge":"🗺️ Roadmap","title":"🔥 POWER-UP ARC · Week 8–11 — React + TypeScript + Tailwind","sub":"Boss: React + TypeScript &#x27;Expense Tracker&#x27; with routing, charts, filters and persistence — deployed.","url":"roadmap.html#phase-3"},{"cat":"Season","badge":"🗺️ Roadmap","title":"🏰 BACKEND DUNGEON ARC · Week 12–16 — Node.js + Express + MongoDB","sub":"Boss: A production-style REST API (Job Board) with JWT auth, roles, pagination, docs and a Postman collection — deployed.","url":"roadmap.html#phase-4"},{"cat":"Season","badge":"🗺️ Roadmap","title":"🗺️ SIDE QUEST ARC · Week 17–18 — SQL + Python (Kerala JD insurance)","sub":"Boss: A 5-table SQL schema + 20 queries for your capstone, plus a small Python CLI and a 2-endpoint Flask/Django API.","url":"roadmap.html#phase-5"},{"cat":"Season","badge":"🗺️ Roadmap","title":"🐉 FINAL BOSS ARC · Week 19–22 — Capstone + Docker + CI/CD","sub":"Boss: &#x27;SkillBridge&#x27; — a full-stack app (auth, roles, CRUD, dashboard) deployed live with Docker + GitHub Actions.","url":"roadmap.html#phase-6"},{"cat":"Season","badge":"🗺️ Roadmap","title":"🗡️ DSA DOJO (DAILY) · Week 3–32 · 45 min/day — DSA &amp; Problem Solving","sub":"Boss: 150 curated problems solved + 2 timed mock coding rounds.","url":"roadmap.html#phase-7"},{"cat":"Season","badge":"🗺️ Roadmap","title":"📊 BONUS BOSS ARC · Week 23–24 (only after capstone) — Power BI + Analytics","sub":"Boss: A 2-page Power BI dashboard published online + a 5-line business insight write-up on your portfolio.","url":"roadmap.html#phase-8"},{"cat":"Season","badge":"🗺️ Roadmap","title":"🏁 JOB HUNT ENDGAME · Week 25–32 — Portfolio, Resume &amp; Offers","sub":"Boss: A signed offer. Your first CTC is not your final form — your learning curve is.","url":"roadmap.html#phase-9"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"Install VS Code + Prettier, ESLint, Live Server, GitLens, Error Lens","sub":"🎮 ACADEMY ARC · Week 1–2","url":"roadmap.html#p1-1"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"Install Node.js LTS · verify `node -v` and `npm -v`","sub":"🎮 ACADEMY ARC · Week 1–2","url":"roadmap.html#p1-2"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"Set Git user.name / user.email + add SSH key to GitHub","sub":"🎮 ACADEMY ARC · Week 1–2","url":"roadmap.html#p1-3"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"Create GitHub profile README + repo `learning-log`","sub":"🎮 ACADEMY ARC · Week 1–2","url":"roadmap.html#p1-4"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"Master the 15 daily Git commands (add, commit, branch, merge, push, pull, stash)","sub":"🎮 ACADEMY ARC · Week 1–2","url":"roadmap.html#p1-5"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"Open your first pull request (fix a typo in any open-source README)","sub":"🎮 ACADEMY ARC · Week 1–2","url":"roadmap.html#p1-6"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"Semantic HTML: header / nav / main / section / article / footer + forms","sub":"🎮 ACADEMY ARC · Week 1–2","url":"roadmap.html#p1-7"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"CSS box model, specificity, cascade, rem/em/clamp()","sub":"🎮 ACADEMY ARC · Week 1–2","url":"roadmap.html#p1-8"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"Flexbox: justify-content, align-items, gap, wrap","sub":"🎮 ACADEMY ARC · Week 1–2","url":"roadmap.html#p1-9"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"CSS Grid: auto-fit + minmax, grid-template-areas","sub":"🎮 ACADEMY ARC · Week 1–2","url":"roadmap.html#p1-10"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"Mobile-first media queries + fluid typography","sub":"🎮 ACADEMY ARC · Week 1–2","url":"roadmap.html#p1-11"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"CSS variables, transitions, hover &amp; focus states","sub":"🎮 ACADEMY ARC · Week 1–2","url":"roadmap.html#p1-12"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"Accessibility: alt text, contrast, keyboard nav, focus rings","sub":"🎮 ACADEMY ARC · Week 1–2","url":"roadmap.html#p1-13"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"Chrome DevTools: inspect, device toolbar, console, network","sub":"🎮 ACADEMY ARC · Week 1–2","url":"roadmap.html#p1-14"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"Build + deploy a 3-page portfolio to Netlify or Vercel","sub":"🎮 ACADEMY ARC · Week 1–2","url":"roadmap.html#p1-15"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"Write a README with screenshots and the live link","sub":"🎮 ACADEMY ARC · Week 1–2","url":"roadmap.html#p1-16"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"let / const / var, scope, temporal dead zone, hoisting","sub":"⚡ CHAKRA CONTROL ARC · Week 3–7","url":"roadmap.html#p2-1"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"Functions, arrow functions, callbacks, pure functions","sub":"⚡ CHAKRA CONTROL ARC · Week 3–7","url":"roadmap.html#p2-2"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"Arrays: map, filter, reduce, find, some, every, sort","sub":"⚡ CHAKRA CONTROL ARC · Week 3–7","url":"roadmap.html#p2-3"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"Objects, destructuring, spread/rest, optional chaining","sub":"⚡ CHAKRA CONTROL ARC · Week 3–7","url":"roadmap.html#p2-4"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"DOM: querySelector, createElement, classList, events","sub":"⚡ CHAKRA CONTROL ARC · Week 3–7","url":"roadmap.html#p2-5"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"Event delegation + forms + preventDefault + validation","sub":"⚡ CHAKRA CONTROL ARC · Week 3–7","url":"roadmap.html#p2-6"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"ES modules (import / export)","sub":"⚡ CHAKRA CONTROL ARC · Week 3–7","url":"roadmap.html#p2-7"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"Promises: then / catch / finally","sub":"⚡ CHAKRA CONTROL ARC · Week 3–7","url":"roadmap.html#p2-8"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"async / await + try / catch + error handling","sub":"⚡ CHAKRA CONTROL ARC · Week 3–7","url":"roadmap.html#p2-9"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"fetch + REST + JSON + loading &amp; error states","sub":"⚡ CHAKRA CONTROL ARC · Week 3–7","url":"roadmap.html#p2-10"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"localStorage / sessionStorage","sub":"⚡ CHAKRA CONTROL ARC · Week 3–7","url":"roadmap.html#p2-11"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"Closures, `this`, call / apply / bind","sub":"⚡ CHAKRA CONTROL ARC · Week 3–7","url":"roadmap.html#p2-12"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"Event loop, call stack, microtasks vs macrotasks","sub":"⚡ CHAKRA CONTROL ARC · Week 3–7","url":"roadmap.html#p2-13"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"Debounce &amp; throttle (write both from scratch)","sub":"⚡ CHAKRA CONTROL ARC · Week 3–7","url":"roadmap.html#p2-14"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"Build Todo app with persistence","sub":"⚡ CHAKRA CONTROL ARC · Week 3–7","url":"roadmap.html#p2-15"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"Build Weather app with a free API (Open-Meteo needs no key)","sub":"⚡ CHAKRA CONTROL ARC · Week 3–7","url":"roadmap.html#p2-16"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"Build Quiz app with timer + score + high score","sub":"⚡ CHAKRA CONTROL ARC · Week 3–7","url":"roadmap.html#p2-17"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"Deploy all 3 + write READMEs with screenshots","sub":"⚡ CHAKRA CONTROL ARC · Week 3–7","url":"roadmap.html#p2-18"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"Create a React app with Vite (`npm create vite@latest`)","sub":"🔥 POWER-UP ARC · Week 8–11","url":"roadmap.html#p3-1"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"JSX rules + conditional rendering + fragments","sub":"🔥 POWER-UP ARC · Week 8–11","url":"roadmap.html#p3-2"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"Components, props, children, composition","sub":"🔥 POWER-UP ARC · Week 8–11","url":"roadmap.html#p3-3"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"useState + controlled inputs + forms","sub":"🔥 POWER-UP ARC · Week 8–11","url":"roadmap.html#p3-4"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"Lists &amp; keys — and why index keys break things","sub":"🔥 POWER-UP ARC · Week 8–11","url":"roadmap.html#p3-5"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"useEffect: dependency array, cleanup, avoid loops","sub":"🔥 POWER-UP ARC · Week 8–11","url":"roadmap.html#p3-6"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"Lifting state up + derived state (no duplicate state)","sub":"🔥 POWER-UP ARC · Week 8–11","url":"roadmap.html#p3-7"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"React Router: routes, params, nested routes, 404","sub":"🔥 POWER-UP ARC · Week 8–11","url":"roadmap.html#p3-8"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"Context API + custom hooks","sub":"🔥 POWER-UP ARC · Week 8–11","url":"roadmap.html#p3-9"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"Fetch data + loading skeletons + error UI","sub":"🔥 POWER-UP ARC · Week 8–11","url":"roadmap.html#p3-10"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"TypeScript: types, interfaces, unions, narrowing","sub":"🔥 POWER-UP ARC · Week 8–11","url":"roadmap.html#p3-11"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"Generics basics + typing props, state, events","sub":"🔥 POWER-UP ARC · Week 8–11","url":"roadmap.html#p3-12"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"Tailwind: spacing scale, responsive prefixes, dark mode","sub":"🔥 POWER-UP ARC · Week 8–11","url":"roadmap.html#p3-13"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"Reusable component folder structure","sub":"🔥 POWER-UP ARC · Week 8–11","url":"roadmap.html#p3-14"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"Complete 2 Frontend Mentor challenges","sub":"🔥 POWER-UP ARC · Week 8–11","url":"roadmap.html#p3-15"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"Deploy the SPA to Vercel/Netlify","sub":"🔥 POWER-UP ARC · Week 8–11","url":"roadmap.html#p3-16"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"Node runtime, npm scripts, package.json, .env + dotenv","sub":"🏰 BACKEND DUNGEON ARC · Week 12–16","url":"roadmap.html#p4-1"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"HTTP verbs, status codes, headers, JSON body","sub":"🏰 BACKEND DUNGEON ARC · Week 12–16","url":"roadmap.html#p4-2"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"Express: routing, route params, query strings","sub":"🏰 BACKEND DUNGEON ARC · Week 12–16","url":"roadmap.html#p4-3"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"Middleware — write your own logger &amp; auth guard","sub":"🏰 BACKEND DUNGEON ARC · Week 12–16","url":"roadmap.html#p4-4"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"Folder structure: routes / controllers / models / utils","sub":"🏰 BACKEND DUNGEON ARC · Week 12–16","url":"roadmap.html#p4-5"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"MongoDB Atlas cluster + connection string + IP allow-list","sub":"🏰 BACKEND DUNGEON ARC · Week 12–16","url":"roadmap.html#p4-6"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"Mongoose schema, validation, indexes","sub":"🏰 BACKEND DUNGEON ARC · Week 12–16","url":"roadmap.html#p4-7"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"CRUD endpoints (GET all, GET one, POST, PATCH, DELETE)","sub":"🏰 BACKEND DUNGEON ARC · Week 12–16","url":"roadmap.html#p4-8"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"Pagination, filtering, sorting","sub":"🏰 BACKEND DUNGEON ARC · Week 12–16","url":"roadmap.html#p4-9"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"bcrypt password hashing","sub":"🏰 BACKEND DUNGEON ARC · Week 12–16","url":"roadmap.html#p4-10"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"JWT access tokens + login/register flow","sub":"🏰 BACKEND DUNGEON ARC · Week 12–16","url":"roadmap.html#p4-11"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"Role-based access (user / admin / recruiter)","sub":"🏰 BACKEND DUNGEON ARC · Week 12–16","url":"roadmap.html#p4-12"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"Central error handler + async wrapper","sub":"🏰 BACKEND DUNGEON ARC · Week 12–16","url":"roadmap.html#p4-13"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"Request validation (zod or express-validator)","sub":"🏰 BACKEND DUNGEON ARC · Week 12–16","url":"roadmap.html#p4-14"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"File upload with Multer (Cloudinary optional)","sub":"🏰 BACKEND DUNGEON ARC · Week 12–16","url":"roadmap.html#p4-15"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"CORS, helmet, rate limiting","sub":"🏰 BACKEND DUNGEON ARC · Week 12–16","url":"roadmap.html#p4-16"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"Postman collection + test every endpoint","sub":"🏰 BACKEND DUNGEON ARC · Week 12–16","url":"roadmap.html#p4-17"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"README API docs with request/response examples","sub":"🏰 BACKEND DUNGEON ARC · Week 12–16","url":"roadmap.html#p4-18"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"Deploy API to Render or Railway + set env vars","sub":"🏰 BACKEND DUNGEON ARC · Week 12–16","url":"roadmap.html#p4-19"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"SELECT, WHERE, ORDER BY, LIMIT","sub":"🗺️ SIDE QUEST ARC · Week 17–18","url":"roadmap.html#p5-1"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"INNER JOIN, LEFT JOIN, self joins","sub":"🗺️ SIDE QUEST ARC · Week 17–18","url":"roadmap.html#p5-2"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"GROUP BY, HAVING, aggregate functions","sub":"🗺️ SIDE QUEST ARC · Week 17–18","url":"roadmap.html#p5-3"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"Subqueries + CTEs (WITH)","sub":"🗺️ SIDE QUEST ARC · Week 17–18","url":"roadmap.html#p5-4"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"INSERT / UPDATE / DELETE + transactions","sub":"🗺️ SIDE QUEST ARC · Week 17–18","url":"roadmap.html#p5-5"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"Indexes: when they help and when they hurt","sub":"🗺️ SIDE QUEST ARC · Week 17–18","url":"roadmap.html#p5-6"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"Normalization + design a 5-table schema","sub":"🗺️ SIDE QUEST ARC · Week 17–18","url":"roadmap.html#p5-7"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"20 interview-style SQL queries on your own schema","sub":"🗺️ SIDE QUEST ARC · Week 17–18","url":"roadmap.html#p5-8"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"LeetCode SQL 50 or HackerRank SQL badge","sub":"🗺️ SIDE QUEST ARC · Week 17–18","url":"roadmap.html#p5-9"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"Python syntax: lists, dicts, loops, functions","sub":"🗺️ SIDE QUEST ARC · Week 17–18","url":"roadmap.html#p5-10"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"Virtualenv + pip + requirements.txt","sub":"🗺️ SIDE QUEST ARC · Week 17–18","url":"roadmap.html#p5-11"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"OOP basics + exceptions + file I/O","sub":"🗺️ SIDE QUEST ARC · Week 17–18","url":"roadmap.html#p5-12"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"requests library + JSON parsing","sub":"🗺️ SIDE QUEST ARC · Week 17–18","url":"roadmap.html#p5-13"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"Build a Python CLI (report / scraper)","sub":"🗺️ SIDE QUEST ARC · Week 17–18","url":"roadmap.html#p5-14"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"Build a tiny Flask or Django API (2 endpoints)","sub":"🗺️ SIDE QUEST ARC · Week 17–18","url":"roadmap.html#p5-15"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"Connect Python to SQLite/Postgres and run a query","sub":"🗺️ SIDE QUEST ARC · Week 17–18","url":"roadmap.html#p5-16"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"Write a 1-page PRD: users, user stories, 6–8 features","sub":"🐉 FINAL BOSS ARC · Week 19–22","url":"roadmap.html#p6-1"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"Design the database schema + ER diagram","sub":"🐉 FINAL BOSS ARC · Week 19–22","url":"roadmap.html#p6-2"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"Auth + roles (e.g. student / recruiter / admin)","sub":"🐉 FINAL BOSS ARC · Week 19–22","url":"roadmap.html#p6-3"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"CRUD resources + search, filter, sort","sub":"🐉 FINAL BOSS ARC · Week 19–22","url":"roadmap.html#p6-4"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"Dashboard with charts (Recharts/Chart.js)","sub":"🐉 FINAL BOSS ARC · Week 19–22","url":"roadmap.html#p6-5"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"File upload or image handling","sub":"🐉 FINAL BOSS ARC · Week 19–22","url":"roadmap.html#p6-6"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"Pagination or infinite scroll","sub":"🐉 FINAL BOSS ARC · Week 19–22","url":"roadmap.html#p6-7"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"Error boundaries + loading skeletons","sub":"🐉 FINAL BOSS ARC · Week 19–22","url":"roadmap.html#p6-8"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"Responsive + accessible UI (keyboard, contrast)","sub":"🐉 FINAL BOSS ARC · Week 19–22","url":"roadmap.html#p6-9"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"Dockerfile for backend + docker-compose (app + db)","sub":"🐉 FINAL BOSS ARC · Week 19–22","url":"roadmap.html#p6-10"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"GitHub Actions: lint + test on every push","sub":"🐉 FINAL BOSS ARC · Week 19–22","url":"roadmap.html#p6-11"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"Deploy frontend, backend, and MongoDB Atlas","sub":"🐉 FINAL BOSS ARC · Week 19–22","url":"roadmap.html#p6-12"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"Store secrets in env vars (never in the repo)","sub":"🐉 FINAL BOSS ARC · Week 19–22","url":"roadmap.html#p6-13"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"Seed demo data + a demo login account","sub":"🐉 FINAL BOSS ARC · Week 19–22","url":"roadmap.html#p6-14"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"README: screenshots, architecture diagram, setup steps","sub":"🐉 FINAL BOSS ARC · Week 19–22","url":"roadmap.html#p6-15"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"Record a 3-minute demo video (Loom or YouTube)","sub":"🐉 FINAL BOSS ARC · Week 19–22","url":"roadmap.html#p6-16"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"Alternate capstone: &#x27;Kerala IT Job Market Analyser&#x27; (Python scraper + pandas + Power BI + React dashboard)","sub":"🐉 FINAL BOSS ARC · Week 19–22","url":"roadmap.html#p6-17"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"Arrays &amp; running sum","sub":"🗡️ DSA DOJO (DAILY) · Week 3–32 · 45 min/day","url":"roadmap.html#p7-1"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"Strings &amp; frequency counting","sub":"🗡️ DSA DOJO (DAILY) · Week 3–32 · 45 min/day","url":"roadmap.html#p7-2"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"Hashing (maps/sets) patterns","sub":"🗡️ DSA DOJO (DAILY) · Week 3–32 · 45 min/day","url":"roadmap.html#p7-3"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"Two pointers","sub":"🗡️ DSA DOJO (DAILY) · Week 3–32 · 45 min/day","url":"roadmap.html#p7-4"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"Sliding window","sub":"🗡️ DSA DOJO (DAILY) · Week 3–32 · 45 min/day","url":"roadmap.html#p7-5"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"Prefix sum","sub":"🗡️ DSA DOJO (DAILY) · Week 3–32 · 45 min/day","url":"roadmap.html#p7-6"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"Stack (valid parentheses, next greater element)","sub":"🗡️ DSA DOJO (DAILY) · Week 3–32 · 45 min/day","url":"roadmap.html#p7-7"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"Queue &amp; deque basics","sub":"🗡️ DSA DOJO (DAILY) · Week 3–32 · 45 min/day","url":"roadmap.html#p7-8"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"Linked list (reverse, middle, cycle)","sub":"🗡️ DSA DOJO (DAILY) · Week 3–32 · 45 min/day","url":"roadmap.html#p7-9"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"Binary search (and binary search on answer)","sub":"🗡️ DSA DOJO (DAILY) · Week 3–32 · 45 min/day","url":"roadmap.html#p7-10"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"Sorting: bubble/selection/insertion + merge/quick idea","sub":"🗡️ DSA DOJO (DAILY) · Week 3–32 · 45 min/day","url":"roadmap.html#p7-11"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"Recursion &amp; backtracking basics","sub":"🗡️ DSA DOJO (DAILY) · Week 3–32 · 45 min/day","url":"roadmap.html#p7-12"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"Trees: traversals, height, diameter","sub":"🗡️ DSA DOJO (DAILY) · Week 3–32 · 45 min/day","url":"roadmap.html#p7-13"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"BST basics","sub":"🗡️ DSA DOJO (DAILY) · Week 3–32 · 45 min/day","url":"roadmap.html#p7-14"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"Heaps / priority queue basics","sub":"🗡️ DSA DOJO (DAILY) · Week 3–32 · 45 min/day","url":"roadmap.html#p7-15"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"Graphs: BFS, DFS, connected components","sub":"🗡️ DSA DOJO (DAILY) · Week 3–32 · 45 min/day","url":"roadmap.html#p7-16"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"Greedy basics","sub":"🗡️ DSA DOJO (DAILY) · Week 3–32 · 45 min/day","url":"roadmap.html#p7-17"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"Dynamic programming intro (climbing stairs, knapsack)","sub":"🗡️ DSA DOJO (DAILY) · Week 3–32 · 45 min/day","url":"roadmap.html#p7-18"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"Bit manipulation basics","sub":"🗡️ DSA DOJO (DAILY) · Week 3–32 · 45 min/day","url":"roadmap.html#p7-19"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"150 total problems + 2 timed mocks","sub":"🗡️ DSA DOJO (DAILY) · Week 3–32 · 45 min/day","url":"roadmap.html#p7-20"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"Install Power BI Desktop (Windows)","sub":"📊 BONUS BOSS ARC · Week 23–24 (only after capstone)","url":"roadmap.html#p8-1"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"Connect MySQL / CSV / Excel data","sub":"📊 BONUS BOSS ARC · Week 23–24 (only after capstone)","url":"roadmap.html#p8-2"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"Power Query: clean, split, merge, pivot","sub":"📊 BONUS BOSS ARC · Week 23–24 (only after capstone)","url":"roadmap.html#p8-3"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"Data model + relationships (star schema)","sub":"📊 BONUS BOSS ARC · Week 23–24 (only after capstone)","url":"roadmap.html#p8-4"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"DAX basics: SUMX, CALCULATE, time intelligence","sub":"📊 BONUS BOSS ARC · Week 23–24 (only after capstone)","url":"roadmap.html#p8-5"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"6 visuals + slicers + drill-through","sub":"📊 BONUS BOSS ARC · Week 23–24 (only after capstone)","url":"roadmap.html#p8-6"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"Publish to Power BI Service + shareable link","sub":"📊 BONUS BOSS ARC · Week 23–24 (only after capstone)","url":"roadmap.html#p8-7"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"Build a dashboard on your own dataset","sub":"📊 BONUS BOSS ARC · Week 23–24 (only after capstone)","url":"roadmap.html#p8-8"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"Add a screenshot + insight to your portfolio","sub":"📊 BONUS BOSS ARC · Week 23–24 (only after capstone)","url":"roadmap.html#p8-9"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"Optional: attempt Microsoft PL-300","sub":"📊 BONUS BOSS ARC · Week 23–24 (only after capstone)","url":"roadmap.html#p8-10"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"One-page ATS resume: projects written like experience","sub":"🏁 JOB HUNT ENDGAME · Week 25–32","url":"roadmap.html#p9-1"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"Add numbers: users, endpoints, load time, test coverage","sub":"🏁 JOB HUNT ENDGAME · Week 25–32","url":"roadmap.html#p9-2"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"LinkedIn headline + About + featured projects","sub":"🏁 JOB HUNT ENDGAME · Week 25–32","url":"roadmap.html#p9-3"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"Portfolio site with 4 case studies (problem → build → result)","sub":"🏁 JOB HUNT ENDGAME · Week 25–32","url":"roadmap.html#p9-4"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"GitHub cleanup: pinned repos, READMEs, live links, green squares","sub":"🏁 JOB HUNT ENDGAME · Week 25–32","url":"roadmap.html#p9-5"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"30-second intro + 2-minute project story (record yourself)","sub":"🏁 JOB HUNT ENDGAME · Week 25–32","url":"roadmap.html#p9-6"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"STAR answers for 10 HR questions","sub":"🏁 JOB HUNT ENDGAME · Week 25–32","url":"roadmap.html#p9-7"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"12 mock interviews (peer / Pramp / Exponent)","sub":"🏁 JOB HUNT ENDGAME · Week 25–32","url":"roadmap.html#p9-8"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"Revise JS, React, Node question banks","sub":"🏁 JOB HUNT ENDGAME · Week 25–32","url":"roadmap.html#p9-9"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"150 DSA problems done + 2 timed mocks","sub":"🏁 JOB HUNT ENDGAME · Week 25–32","url":"roadmap.html#p9-10"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"Apply 25/week: Kerala + Bengaluru + Chennai + Hyderabad + remote","sub":"🏁 JOB HUNT ENDGAME · Week 25–32","url":"roadmap.html#p9-11"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"5 referrals/week via LinkedIn alumni &amp; ex-colleagues","sub":"🏁 JOB HUNT ENDGAME · Week 25–32","url":"roadmap.html#p9-12"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"Track every application in the Job Tracker sheet","sub":"🏁 JOB HUNT ENDGAME · Week 25–32","url":"roadmap.html#p9-13"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"Follow up after 5–7 days (one polite message)","sub":"🏁 JOB HUNT ENDGAME · Week 25–32","url":"roadmap.html#p9-14"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"Negotiate with a range, not a single number","sub":"🏁 JOB HUNT ENDGAME · Week 25–32","url":"roadmap.html#p9-15"},{"cat":"Checkpoint","badge":"✅ Checkpoint","title":"Post 2 build-in-public updates per week","sub":"🏁 JOB HUNT ENDGAME · Week 25–32","url":"roadmap.html#p9-16"},{"cat":"Course","badge":"🎥 Video Course","title":"Complete Git and GitHub Tutorial","sub":"Kunal Kushwaha · 1h15m · English","url":"https://www.youtube.com/watch?v=apGV9Kg7ics"},{"cat":"Course","badge":"🎥 Video Course","title":"HTML &amp; CSS Full Course – Beginner to Pro","sub":"SuperSimpleDev · 6h30m · English","url":"https://www.youtube.com/watch?v=G3e-cpL7ofc"},{"cat":"Course","badge":"🎥 Video Course","title":"Frontend Roadmap (read, don&#x27;t binge)","sub":"roadmap.sh · 30m · reference","url":"https://roadmap.sh/frontend"},{"cat":"Course","badge":"🎥 Video Course","title":"JavaScript Tutorial Full Course – Beginner to Pro (2024)","sub":"SuperSimpleDev · 22h · English","url":"https://www.youtube.com/watch?v=EerdGm-ehJQ"},{"cat":"Course","badge":"🎥 Video Course","title":"Namaste JavaScript (Season 1 + 2)","sub":"Akshay Saini · Playlist · English","url":"https://www.youtube.com/playlist?list=PLlasXeu85E9cQ32gLCvAvr9vNaUccPVNP"},{"cat":"Course","badge":"🎥 Video Course","title":"The Modern JavaScript Tutorial","sub":"javascript.info · Reference · read daily","url":"https://javascript.info"},{"cat":"Course","badge":"🎥 Video Course","title":"Chai aur React","sub":"Hitesh Choudhary (chai aur code) · ~20h · Hindi/Hinglish","url":"https://www.youtube.com/playlist?list=PLu71SKxNbfoDqgPchmvIsL4hTnJIrtige"},{"cat":"Course","badge":"🎥 Video Course","title":"TypeScript playlist","sub":"Hitesh Choudhary · ~5h · Hindi/Hinglish","url":"https://www.youtube.com/playlist?list=PLRAV69dS1uWRPSfKzwZsIm-Axxq-LxqhW"},{"cat":"Course","badge":"🎥 Video Course","title":"Learn React (official docs)","sub":"react.dev · Reference · English","url":"https://react.dev/learn"},{"cat":"Course","badge":"🎥 Video Course","title":"Tailwind CSS docs","sub":"tailwindcss.com · Reference","url":"https://tailwindcss.com/docs"},{"cat":"Course","badge":"🎥 Video Course","title":"Complete Backend Developer Course (chai aur backend)","sub":"Hitesh Choudhary · ~30h · Hindi/Hinglish","url":"https://www.youtube.com/watch?v=7fjOw8ApZ1I"},{"cat":"Course","badge":"🎥 Video Course","title":"Node.js Crash Course Tutorial","sub":"The Net Ninja · 4h30m · English","url":"https://www.youtube.com/watch?v=zb3Qk8SG5Ms"},{"cat":"Course","badge":"🎥 Video Course","title":"MongoDB free courses","sub":"MongoDB University · Self-paced · English","url":"https://learn.mongodb.com"},{"cat":"Course","badge":"🎥 Video Course","title":"MySQL Tutorial for Beginners [Full Course]","sub":"Programming with Mosh · 3h10m · English","url":"https://www.youtube.com/watch?v=7S_tz1z_5bA"},{"cat":"Course","badge":"🎥 Video Course","title":"Python Tutorial – Python for Beginners","sub":"Programming with Mosh · 6h · English","url":"https://www.youtube.com/watch?v=_uQrJ0TkZlc"},{"cat":"Course","badge":"🎥 Video Course","title":"Django official tutorial (or Flask quickstart)","sub":"Django docs · 3h · English","url":"https://docs.djangoproject.com/en/stable/intro/tutorial01/"},{"cat":"Course","badge":"🎥 Video Course","title":"Docker Tutorial for Beginners [FULL COURSE in 3 Hours]","sub":"TechWorld with Nana · 3h · English","url":"https://www.youtube.com/watch?v=3c-iBn73dDE"},{"cat":"Course","badge":"🎥 Video Course","title":"GitHub Actions documentation","sub":"GitHub Docs · Reference","url":"https://docs.github.com/en/actions"},{"cat":"Course","badge":"🎥 Video Course","title":"Deployment guides","sub":"Vercel / Render / Railway · Reference","url":"https://vercel.com/docs"},{"cat":"Course","badge":"🎥 Video Course","title":"Striver&#x27;s A2Z DSA Sheet &amp; Course","sub":"takeUforward · 450 items · free","url":"https://takeuforward.org/dsa/strivers-a2z-sheet-learn-dsa-a-to-z"},{"cat":"Course","badge":"🎥 Video Course","title":"Striver A2Z playlist","sub":"takeUforward · YouTube playlist","url":"https://www.youtube.com/playlist?list=PLgUwDviBIf0oF6QL8m22w1hIDC1vJ_BHz"},{"cat":"Course","badge":"🎥 Video Course","title":"NeetCode Roadmap (optional)","sub":"NeetCode · Free · English","url":"https://neetcode.io/roadmap"},{"cat":"Course","badge":"🎥 Video Course","title":"Power BI Project for Beginners (Sales Insights)","sub":"codebasics · 3h · English","url":"https://www.youtube.com/playlist?list=PLeo1K3hjS3uva8pk1FI3iK9kCOKQdz1I9"},{"cat":"Course","badge":"🎥 Video Course","title":"Power BI Data Analyst (PL-300) certification path","sub":"Microsoft Learn · Optional · free path","url":"https://learn.microsoft.com/en-us/credentials/certifications/data-analyst-associate/"},{"cat":"Course","badge":"🎥 Video Course","title":"DAX overview","sub":"Microsoft Learn · Reference","url":"https://learn.microsoft.com/en-us/dax/"},{"cat":"Course","badge":"🎥 Video Course","title":"System Design Primer","sub":"GitHub · donnemartin · Reference","url":"https://github.com/donnemartin/system-design-primer"},{"cat":"Course","badge":"🎥 Video Course","title":"Frontend interview questions","sub":"GeeksforGeeks · Reference","url":"https://www.geeksforgeeks.org/frontend-interview-questions/"},{"cat":"Course","badge":"🎥 Video Course","title":"Career + interview videos (Malayalam)","sub":"Brototype Malayalam · Channel · Malayalam","url":"https://www.youtube.com/@BrototypeMalayalam"},{"cat":"Project","badge":"🚀 Project","title":"LV.1 · Week 4–5 — Kerala Travel Planner","sub":"HTML · CSS · JS · API · localStorage · Shows DOM + API + state, without any framework.","url":"projects.html"},{"cat":"Project","badge":"🚀 Project","title":"LV.2 · Week 10–11 — Expense Tracker (React + TS)","sub":"React · TypeScript · Tailwind · Recharts · Shows components, hooks, typing, charts.","url":"projects.html"},{"cat":"Project","badge":"🚀 Project","title":"LV.3 · Week 15–16 — Job Board API","sub":"Node · Express · MongoDB · JWT · Shows backend thinking: validation, errors, security.","url":"projects.html"},{"cat":"Project","badge":"🚀 Project","title":"LV.4 · Week 19–22 — SkillBridge (Capstone)","sub":"MERN · TypeScript · Docker · CI/CD · This is the project that gets you hired. 5-minute demo.","url":"projects.html"},{"cat":"Project","badge":"🚀 Project","title":"LV.5 · Week 23–24 — Kerala IT Job Market Analyser","sub":"Python · pandas · Power BI · React · Data + full-stack story. Unique in a pile of identical MERN resumes.","url":"projects.html"},{"cat":"Interview","badge":"⚡ JavaScript Core","title":"What is a closure in JavaScript? Give a real-world production use case.","sub":"A closure is the combination of a function bundled together with references to its surrounding lexical environ...","url":"interviews.html#iq-1"},{"cat":"Interview","badge":"⚡ JavaScript Core","title":"Explain the difference between var, let, and const, including hoisting and the Temporal Dead Zone (TDZ).","sub":"var is function-scoped and hoisted with an initial value of undefined. let and const are block-scoped ({ ... }...","url":"interviews.html#iq-2"},{"cat":"Interview","badge":"⚡ JavaScript Core","title":"How does the JavaScript Event Loop work? Explain Microtasks vs Macrotasks with a code example.","sub":"JavaScript is single-threaded with a non-blocking concurrency model powered by the Event Loop. When synchronou...","url":"interviews.html#iq-3"},{"cat":"Interview","badge":"⚡ JavaScript Core","title":"Implement debounce and throttle from scratch. When would you use each in a real project?","sub":"Debounce delays invoking a function until a specified idle time has elapsed since the last time it was called ...","url":"interviews.html#iq-4"},{"cat":"Interview","badge":"⚡ JavaScript Core","title":"Compare map(), filter(), reduce(), and forEach(). Which ones mutate the original array?","sub":"forEach executes a callback for each element and returns undefined; it is used for side effects. map transform...","url":"interviews.html#iq-5"},{"cat":"Interview","badge":"⚡ JavaScript Core","title":"How does the 'this' keyword behave in arrow functions compared to regular functions?","sub":"In regular functions, 'this' is dynamically determined by how the function is invoked (as an object method, st...","url":"interviews.html#iq-6"},{"cat":"Interview","badge":"⚡ JavaScript Core","title":"What is the difference between a shallow copy and a deep copy? How do you create both in modern JavaScript?","sub":"A shallow copy duplicates only top-level primitive values; nested objects or arrays are copied by memory refer...","url":"interviews.html#iq-7"},{"cat":"Interview","badge":"⚡ JavaScript Core","title":"Explain Event Bubbling, Event Capturing, and Event Delegation.","sub":"When an event occurs in the DOM, it travels through 3 phases: 1) Capturing phase (trickling down from window t...","url":"interviews.html#iq-8"},{"cat":"Interview","badge":"⚡ JavaScript Core","title":"Explain Promises vs async/await. How do you handle parallel asynchronous requests cleanly?","sub":"Promises represent the eventual completion (or failure) of an asynchronous operation and its resulting value, ...","url":"interviews.html#iq-9"},{"cat":"Interview","badge":"⚡ JavaScript Core","title":"What is Function Currying? Implement a curried function sum(1)(2)(3).","sub":"Currying transforms a function that takes multiple arguments into a sequence of nested unary functions that ea...","url":"interviews.html#iq-10"},{"cat":"Interview","badge":"⚡ JavaScript Core","title":"How does prototypal inheritance work in JavaScript? What is the prototype chain?","sub":"JavaScript does not use classical inheritance; it uses prototypes. Every JavaScript object has an internal [[P...","url":"interviews.html#iq-11"},{"cat":"Interview","badge":"⚡ JavaScript Core","title":"What are common causes of memory leaks in JavaScript web applications?","sub":"Common causes include: 1) Forgotten timers or intervals (setInterval running indefinitely), 2) Unregistered ev...","url":"interviews.html#iq-12"},{"cat":"Interview","badge":"⚡ JavaScript Core","title":"Explain strict equality (===) vs loose equality (==) and implicit type coercion.","sub":"Loose equality (==) performs implicit type coercion (converting types before comparing according to the Abstra...","url":"interviews.html#iq-13"},{"cat":"Interview","badge":"⚡ JavaScript Core","title":"What are Generator functions and how does the 'yield' keyword work?","sub":"A generator function (declared with function*) can pause its execution using the 'yield' keyword and resume la...","url":"interviews.html#iq-14"},{"cat":"Interview","badge":"⚡ JavaScript Core","title":"What are JavaScript ES Modules vs CommonJS modules? When is each used?","sub":"CommonJS (CJS) uses require() and module.exports, which are synchronous and evaluated at runtime; it has been ...","url":"interviews.html#iq-15"},{"cat":"Interview","badge":"🔥 React & TypeScript","title":"How does the Virtual DOM and Reconciliation algorithm work in React?","sub":"The Virtual DOM is a lightweight JavaScript object representation of the real DOM. When state changes, React c...","url":"interviews.html#iq-16"},{"cat":"Interview","badge":"🔥 React & TypeScript","title":"Why does React require a unique 'key' prop in lists? What breaks if you use array indices?","sub":"React uses keys to identify which items in a list have changed, been added, or been removed during reconciliat...","url":"interviews.html#iq-17"},{"cat":"Interview","badge":"🔥 React & TypeScript","title":"Explain useEffect: dependency array rules, cleanup functions, and how to avoid infinite loops.","sub":"useEffect handles side effects (API calls, subscriptions, DOM mutations). If dependencies are omitted, it runs...","url":"interviews.html#iq-18"},{"cat":"Interview","badge":"🔥 React & TypeScript","title":"Compare Controlled vs Uncontrolled components in React. When would you use useRef?","sub":"A controlled component has its form data handled by React state (value={val} and onChange={e => setVal(e.targe...","url":"interviews.html#iq-19"},{"cat":"Interview","badge":"🔥 React & TypeScript","title":"When should you use useMemo and useCallback? What is the performance cost of overusing them?","sub":"useMemo caches the result of an expensive calculation (e.g. sorting 5,000 items) between renders. useCallback ...","url":"interviews.html#iq-20"},{"cat":"Interview","badge":"🔥 React & TypeScript","title":"What is Prop Drilling and what are three architectural solutions to eliminate it?","sub":"Prop drilling occurs when data must be passed down through several layers of intermediate components that do n...","url":"interviews.html#iq-21"},{"cat":"Interview","badge":"🔥 React & TypeScript","title":"In TypeScript, what is the difference between 'interface' and 'type' aliases?","sub":"Both can define object structures and be extended. Key differences: 1) Declaration merging: multiple interface...","url":"interviews.html#iq-22"},{"cat":"Interview","badge":"🔥 React & TypeScript","title":"How do you create and type a custom hook in React with TypeScript?","sub":"A custom hook is a JavaScript function whose name starts with 'use' and that calls other React hooks. In TypeS...","url":"interviews.html#iq-23"},{"cat":"Interview","badge":"🔥 React & TypeScript","title":"Explain Client-Side Rendering (CSR), Server-Side Rendering (SSR), and Static Site Generation (SSG).","sub":"CSR (standard React SPA): Browser downloads a minimal HTML shell and a large JS bundle; rendering occurs in th...","url":"interviews.html#iq-24"},{"cat":"Interview","badge":"🔥 React & TypeScript","title":"What are React Error Boundaries? What kinds of errors can they NOT catch?","sub":"Error Boundaries are React components that catch JavaScript errors anywhere in their child component tree, log...","url":"interviews.html#iq-25"},{"cat":"Interview","badge":"🔥 React & TypeScript","title":"How does React 18 Automatic Batching work?","sub":"Prior to React 18, React only batched state updates inside React event handlers (like onClick). State updates ...","url":"interviews.html#iq-26"},{"cat":"Interview","badge":"🔥 React & TypeScript","title":"What is React.lazy and Suspense? How does it improve initial bundle load times?","sub":"React.lazy enables dynamic code-splitting by importing components on-demand as separate chunks rather than bun...","url":"interviews.html#iq-27"},{"cat":"Interview","badge":"🔥 React & TypeScript","title":"How do you optimize rendering performance for large lists of 10,000 items in React?","sub":"Rendering 10,000 DOM nodes simultaneously causes severe browser jank and memory bloat. The industry solution i...","url":"interviews.html#iq-28"},{"cat":"Interview","badge":"🔥 React & TypeScript","title":"How do you type React Props with TypeScript, including children and optional callbacks?","sub":"Define an interface or type specifying required and optional (?) properties. Use React.ReactNode for component...","url":"interviews.html#iq-29"},{"cat":"Interview","badge":"🔥 React & TypeScript","title":"What are React Fragments (<>...</>) and why do we use them instead of extra <div> tags?","sub":"React components must return a single root element. Wrapping elements in an extra <div> pollutes the DOM hiera...","url":"interviews.html#iq-30"},{"cat":"Interview","badge":"🏰 Node.js & REST APIs","title":"What is Express middleware? Write an authentication guard middleware from scratch.","sub":"Middleware functions in Express have access to the request object (req), the response object (res), and the ne...","url":"interviews.html#iq-31"},{"cat":"Interview","badge":"🏰 Node.js & REST APIs","title":"Compare JWT (JSON Web Tokens) vs Session Cookies. What are the security trade-offs?","sub":"JWTs are stateless; user identity and claims are cryptographically signed and stored on the client, eliminatin...","url":"interviews.html#iq-32"},{"cat":"Interview","badge":"🏰 Node.js & REST APIs","title":"How does bcrypt hash passwords and why are salt rounds critical?","sub":"bcrypt is an adaptive cryptographic hash function designed specifically for passwords. It incorporates a salt ...","url":"interviews.html#iq-33"},{"cat":"Interview","badge":"🏰 Node.js & REST APIs","title":"How do you architect centralized error handling in an Express production application?","sub":"Create an operational AppError class to distinguish operational errors (e.g. invalid inputs, 404s) from progra...","url":"interviews.html#iq-34"},{"cat":"Interview","badge":"🏰 Node.js & REST APIs","title":"Explain RESTful HTTP status codes: 200, 201, 204, 400, 401, 403, 404, 500.","sub":"200 OK: Standard successful GET/PUT/PATCH. 201 Created: Resource successfully created (POST). 204 No Content: ...","url":"interviews.html#iq-35"},{"cat":"Interview","badge":"🏰 Node.js & REST APIs","title":"Explain the Node.js Event Loop phases in detail.","sub":"The Node.js event loop coordinates non-blocking I/O through distinct phases: 1) Timers: executes callbacks sch...","url":"interviews.html#iq-36"},{"cat":"Interview","badge":"🏰 Node.js & REST APIs","title":"What are Streams and Buffers in Node.js? Why are they vital for file processing?","sub":"A Buffer is a raw chunk of allocated memory outside the V8 heap used to handle binary data. A Stream is an int...","url":"interviews.html#iq-37"},{"cat":"Interview","badge":"🏰 Node.js & REST APIs","title":"How do you protect an Express REST API against common web vulnerabilities?","sub":"1) CORS: Configure explicit origin allow-lists. 2) Helmet: Automatically sets secure HTTP headers (HSTS, Conte...","url":"interviews.html#iq-38"},{"cat":"Interview","badge":"🏰 Node.js & REST APIs","title":"Compare Offset-based vs Cursor-based pagination for large datasets.","sub":"Offset pagination uses LIMIT x OFFSET y. It is simple to implement but has two major flaws at scale: 1) Perfor...","url":"interviews.html#iq-39"},{"cat":"Interview","badge":"🏰 Node.js & REST APIs","title":"What is Clustering in Node.js and why do production apps use PM2?","sub":"Because Node.js runs on a single thread by default, a server with 8 CPU cores utilizes only 1 core. The Node.j...","url":"interviews.html#iq-40"},{"cat":"Interview","badge":"🏰 Node.js & REST APIs","title":"How do WebSockets differ from standard HTTP polling and Server-Sent Events (SSE)?","sub":"HTTP Polling involves the client repeatedly sending requests at intervals (high bandwidth waste). Server-Sent ...","url":"interviews.html#iq-41"},{"cat":"Interview","badge":"🏰 Node.js & REST APIs","title":"What is Idempotency in HTTP methods? Which methods are idempotent?","sub":"An HTTP method is idempotent if making multiple identical requests has the same effect on the server state as ...","url":"interviews.html#iq-42"},{"cat":"Interview","badge":"🏰 Node.js & REST APIs","title":"How do you handle file uploads safely in Node.js with Multer?","sub":"Use the Multer middleware to process multipart/form-data. Safety measures include: 1) File type validation (ch...","url":"interviews.html#iq-43"},{"cat":"Interview","badge":"🏰 Node.js & REST APIs","title":"Walk me through your production deployment pipeline for a MERN stack application.","sub":"1) Code is pushed to GitHub feature branch. 2) GitHub Actions runs automated linting and unit tests. 3) Fronte...","url":"interviews.html#iq-44"},{"cat":"Interview","badge":"🏰 Node.js & REST APIs","title":"What is the purpose of package-lock.json and why must it be committed to version control?","sub":"package.json specifies version ranges using semver (e.g. ^18.2.0, allowing non-breaking minor updates). packag...","url":"interviews.html#iq-45"},{"cat":"Interview","badge":"🗄️ SQL & MongoDB","title":"When should you choose a Relational (SQL) database vs a Document (MongoDB) database?","sub":"Choose SQL (PostgreSQL/MySQL) when your data has strict relational structures, requires ACID transactions (e.g...","url":"interviews.html#iq-46"},{"cat":"Interview","badge":"🗄️ SQL & MongoDB","title":"Explain INNER JOIN, LEFT JOIN, and self joins with a clear SQL example.","sub":"INNER JOIN returns only rows that have matching values in both tables. LEFT JOIN returns all rows from the lef...","url":"interviews.html#iq-47"},{"cat":"Interview","badge":"🗄️ SQL & MongoDB","title":"What is a Database Index? How does it speed up queries and why does it slow down writes?","sub":"An index is a specialized data structure (typically a B-Tree) that holds sorted values of specific columns alo...","url":"interviews.html#iq-48"},{"cat":"Interview","badge":"🗄️ SQL & MongoDB","title":"What is Database Normalization (1NF, 2NF, 3NF)? Why do we normalize?","sub":"Normalization organizes database tables to reduce data redundancy and eliminate insert, update, and deletion a...","url":"interviews.html#iq-49"},{"cat":"Interview","badge":"🗄️ SQL & MongoDB","title":"Explain ACID properties in database transactions with a bank transfer example.","sub":"Atomicity: All operations in the transaction succeed, or the entire transaction rolls back ('all or nothing')....","url":"interviews.html#iq-50"},{"cat":"Interview","badge":"🗄️ SQL & MongoDB","title":"How does the MongoDB Aggregation Pipeline work? Explain $match and $group.","sub":"The aggregation pipeline is a framework for data processing where documents pass through a multi-stage pipelin...","url":"interviews.html#iq-51"},{"cat":"Interview","badge":"🗄️ SQL & MongoDB","title":"What is the difference between WHERE and HAVING in SQL?","sub":"WHERE filters individual rows BEFORE any groupings or aggregate functions (SUM, AVG, COUNT) are calculated. HA...","url":"interviews.html#iq-52"},{"cat":"Interview","badge":"🗄️ SQL & MongoDB","title":"What are SQL Common Table Expressions (CTEs) and why are they cleaner than subqueries?","sub":"A CTE is a temporary named result set defined using the WITH keyword that exists only for the duration of a si...","url":"interviews.html#iq-53"},{"cat":"Interview","badge":"🗄️ SQL & MongoDB","title":"What is Connection Pooling and why is opening a new database connection on every HTTP request dangerous?","sub":"Establishing a database connection requires expensive TCP handshakes, TLS negotiation, and authentication over...","url":"interviews.html#iq-54"},{"cat":"Interview","badge":"🗄️ SQL & MongoDB","title":"Compare Primary Keys, Foreign Keys, and UUIDs. When should you use UUID over auto-increment ID?","sub":"A Primary Key uniquely identifies each record in a table. A Foreign Key references a Primary Key in another ta...","url":"interviews.html#iq-55"},{"cat":"Interview","badge":"🗄️ SQL & MongoDB","title":"How do you prevent SQL Injection and NoSQL Injection attacks?","sub":"For SQL: ALWAYS use Parameterized Queries (Prepared Statements) or an ORM/query builder (Prisma, Knex); never ...","url":"interviews.html#iq-56"},{"cat":"Interview","badge":"🗄️ SQL & MongoDB","title":"What is Optimistic Locking vs Pessimistic Locking?","sub":"Pessimistic Locking locks a database record immediately upon reading it, preventing all other transactions fro...","url":"interviews.html#iq-57"},{"cat":"Interview","badge":"🏗️ System Design & Web Architecture","title":"What happens from the moment you type 'google.com' into the browser and press Enter?","sub":"1) URL Parsing: Browser identifies protocol, host, and port. 2) DNS Lookup: Browser checks cache (browser -> O...","url":"interviews.html#iq-58"},{"cat":"Interview","badge":"🏗️ System Design & Web Architecture","title":"What is a CDN (Content Delivery Network) and how does Edge Caching work?","sub":"A CDN is a geographically distributed network of proxy edge servers located close to users. When a user reques...","url":"interviews.html#iq-59"},{"cat":"Interview","badge":"🏗️ System Design & Web Architecture","title":"Explain Horizontal vs Vertical Scaling. What are the trade-offs?","sub":"Vertical Scaling ('scaling up') means upgrading the CPU, RAM, or SSD of an existing server. Trade-off: simple ...","url":"interviews.html#iq-60"},{"cat":"Interview","badge":"🏗️ System Design & Web Architecture","title":"What are In-Memory Caching systems like Redis, and when should you implement caching?","sub":"Redis is an in-memory key-value data store that delivers sub-millisecond read/write speeds. Implement caching ...","url":"interviews.html#iq-61"},{"cat":"Interview","badge":"🏗️ System Design & Web Architecture","title":"Compare Monolithic Architecture vs Microservices Architecture for a startup.","sub":"A Monolith bundles UI, business logic, and database access into a single unified codebase and deployment artif...","url":"interviews.html#iq-62"},{"cat":"Interview","badge":"🏗️ System Design & Web Architecture","title":"What are Message Queues (e.g. BullMQ, RabbitMQ) and why are background jobs necessary?","sub":"A message queue enables asynchronous processing by decoupling time-consuming tasks from the client request-res...","url":"interviews.html#iq-63"},{"cat":"Interview","badge":"🏗️ System Design & Web Architecture","title":"What is Docker and containerization? How does a container differ from a Virtual Machine?","sub":"A container packages an application and all its system dependencies into an isolated runtime unit that runs id...","url":"interviews.html#iq-64"},{"cat":"Interview","badge":"🏗️ System Design & Web Architecture","title":"What is CORS (Cross-Origin Resource Sharing) and what is an HTTP Preflight (OPTIONS) request?","sub":"CORS is a browser security mechanism that restricts web pages from making HTTP requests to a domain different ...","url":"interviews.html#iq-65"},{"cat":"Interview","badge":"🤝 HR & Behavioural","title":"Tell me about yourself (The 30-Second Formula).","sub":"Use the Present -> Past -> Future formula. Keep it strictly focused on your professional identity, relevant te...","url":"interviews.html#iq-66"},{"cat":"Interview","badge":"🤝 HR & Behavioural","title":"Why should we hire you as a fresher over someone with more years of experience?","sub":"Anchor on your proof-of-work, recent full-stack hands-on muscle memory, clean coding practices, and high learn...","url":"interviews.html#iq-67"},{"cat":"Interview","badge":"🤝 HR & Behavioural","title":"Tell me about a challenging bug that took you days to solve. How did you identify and fix it? (STAR Method)","sub":"Use the STAR method: Situation (Context), Task (Goal), Action (Debugging methodology), and Result (Resolution ...","url":"interviews.html#iq-68"},{"cat":"Interview","badge":"🤝 HR & Behavioural","title":"What did you do during your frontend internship? Quantify your impact.","sub":"Avoid passive descriptions like 'I did tickets'. Use action verbs and quantifiable metrics (number of screens,...","url":"interviews.html#iq-69"},{"cat":"Interview","badge":"🤝 HR & Behavioural","title":"Tell me about a time you had to learn something quickly under deadline. (STAR)","sub":"Highlight your structured approach to rapid learning: documentation first, minimal working proof-of-concept, a...","url":"interviews.html#iq-70"},{"cat":"Interview","badge":"🤝 HR & Behavioural","title":"How do you handle disagreement with a senior engineer during code review?","sub":"Frame code review as a collaborative learning opportunity focused on code quality and business impact, never a...","url":"interviews.html#iq-71"},{"cat":"Interview","badge":"🤝 HR & Behavioural","title":"Where do you see yourself in 2 to 3 years?","sub":"Focus on technical depth, engineering ownership, and mentoring entry-level developers within the company....","url":"interviews.html#iq-72"},{"cat":"Interview","badge":"🤝 HR & Behavioural","title":"Why are you interested in our company specifically?","sub":"Demonstrate that you did your homework on their specific tech stack, recent company news, or the engineering c...","url":"interviews.html#iq-73"},{"cat":"Interview","badge":"🤝 HR & Behavioural","title":"What are your salary expectations?","sub":"Anchor on research-backed market standards for freshers in your region, communicate flexibility, and emphasize...","url":"interviews.html#iq-74"},{"cat":"Interview","badge":"🤝 HR & Behavioural","title":"What do you do when you are completely stuck on a technical problem?","sub":"Describe a disciplined 4-step escalation protocol: isolation, documentation search, rubber-ducking, and timely...","url":"interviews.html#iq-75"},{"cat":"Interview","badge":"🤝 HR & Behavioural","title":"Tell me about a time you made a mistake or failed. What did you learn? (STAR)","sub":"Pick a genuine technical mistake, demonstrate rapid ownership, describe the fix, and highlight the automated p...","url":"interviews.html#iq-76"},{"cat":"Interview","badge":"🤝 HR & Behavioural","title":"Are you willing to relocate to Bengaluru, Chennai, or Hyderabad if required?","sub":"Express proactive enthusiasm for career growth while reaffirming readiness for Kerala or remote opportunities....","url":"interviews.html#iq-77"},{"cat":"Interview","badge":"🤝 HR & Behavioural","title":"How do you stay updated with rapidly changing web technologies and frameworks?","sub":"Cite specific authoritative resources, changelogs, podcasts, and personal building habits....","url":"interviews.html#iq-78"},{"cat":"Interview","badge":"🤝 HR & Behavioural","title":"Explain a complex technical concept (like API Authentication) to a non-technical person.","sub":"Use an intuitive, relatable real-world analogy (hotel keycards, coat-check tickets) without dropping jargon....","url":"interviews.html#iq-79"},{"cat":"Interview","badge":"🤝 HR & Behavioural","title":"Do you have any questions for us? (The 3 Winning Questions)","sub":"Always ask questions! Asking thoughtful reverse-interview questions signals curiosity, standards, and genuine ...","url":"interviews.html#iq-80"},{"cat":"Tool","badge":"🛠️ Tool","title":"HTML / CSS","sub":"MUST priority · Week 1–2 · Every JD. Your foundation. Don&#x27;t skip responsive + accessibility.","url":"market.html"},{"cat":"Tool","badge":"🛠️ Tool","title":"JavaScript (ES6+)","sub":"MUST priority · Week 3–7 · The #1 interview filter in India. Closures, async, array methods.","url":"market.html"},{"cat":"Tool","badge":"🛠️ Tool","title":"React","sub":"MUST priority · Week 8–11 · ~70% of frontend JDs list React as primary framework.","url":"market.html"},{"cat":"Tool","badge":"🛠️ Tool","title":"TypeScript","sub":"MUST priority · Week 8–11 · Expected in most new product-company codebases; +25–40% pay premium.","url":"market.html"},{"cat":"Tool","badge":"🛠️ Tool","title":"Git &amp; GitHub","sub":"MUST priority · Week 1 · Non-negotiable. Your green squares are your proof of work.","url":"market.html"},{"cat":"Tool","badge":"🛠️ Tool","title":"Node.js + Express","sub":"MUST priority · Week 12–16 · The &#x27;backend&#x27; half of MERN; most common fresher full-stack stack.","url":"market.html"},{"cat":"Tool","badge":"🛠️ Tool","title":"MongoDB / Mongoose","sub":"MUST priority · Week 12–16 · Default database for MERN projects and startups.","url":"market.html"},{"cat":"Tool","badge":"🛠️ Tool","title":"SQL (MySQL/Postgres)","sub":"MUST priority · Week 17–18 · Half of enterprise JDs still ask for SQL. Learn joins + indexes.","url":"market.html"},{"cat":"Tool","badge":"🛠️ Tool","title":"REST APIs + Postman","sub":"MUST priority · Week 12–16 · You will be asked to &#x27;explain your API&#x27; in every backend round.","url":"market.html"},{"cat":"Tool","badge":"🛠️ Tool","title":"Tailwind CSS","sub":"SHOULD priority · Week 8–11 · Fast UI, common in startup codebases, great for portfolio speed.","url":"market.html"},{"cat":"Tool","badge":"🛠️ Tool","title":"Docker","sub":"SHOULD priority · Week 19–22 · 20–40% salary premium skillset; small teams love devs who can ship.","url":"market.html"},{"cat":"Tool","badge":"🛠️ Tool","title":"Cloud deployment (Vercel/Render/AWS basics)","sub":"SHOULD priority · Week 19–22 · A live URL beats a screenshot. Recruiters check.","url":"market.html"},{"cat":"Tool","badge":"🛠️ Tool","title":"Python + Django/Flask","sub":"SHOULD priority · Week 17–18 · Kerala JDs frequently ask Python full-stack. A local edge for you.","url":"market.html"},{"cat":"Tool","badge":"🛠️ Tool","title":"Testing (Jest basics)","sub":"SHOULD priority · After core · Nice differentiator for product companies; not all fresher JDs require it.","url":"market.html"},{"cat":"Tool","badge":"🛠️ Tool","title":"Power BI","sub":"BONUS priority · Week 23–24 · Differentiator for data-adjacent and service-company roles.","url":"market.html"},{"cat":"Tool","badge":"🛠️ Tool","title":"Next.js","sub":"BONUS priority · After core · Growing fast in 2026 JDs; learn after React, not before.","url":"market.html"},{"cat":"Tool","badge":"🛠️ Tool","title":"Java + Spring Boot","sub":"LATER priority · Year 2 · Very common in Kerala enterprise/Infopark JDs — but learn after you&#x27;re employable.","url":"market.html"},{"cat":"Tool","badge":"🛠️ Tool","title":"Kubernetes","sub":"LATER priority · Year 2+ · Not a fresher requirement. Ignore for now.","url":"market.html"},{"cat":"Company","badge":"💼 Target Company","title":"UST","sub":"MNC / service · Trivandrum, Kochi · High fresher volume; strong training programmes.","url":"jobs.html"},{"cat":"Company","badge":"💼 Target Company","title":"Infosys / TCS / Wipro / Cognizant","sub":"MNC / service · Kochi, Trivandrum · Aptitude-driven hiring; steady first job, slower growth.","url":"jobs.html"},{"cat":"Company","badge":"💼 Target Company","title":"IBS Software","sub":"Product · Trivandrum, Kochi · Travel-tech product company; good engineering exposure.","url":"jobs.html"},{"cat":"Company","badge":"💼 Target Company","title":"Speridian Technologies","sub":"Product / service · Technopark · Hires Java + React/Next.js full-stack profiles.","url":"jobs.html"},{"cat":"Company","badge":"💼 Target Company","title":"Experion Technologies","sub":"Service / product · Kochi, Trivandrum · Product engineering; Java, .NET, JS stacks.","url":"jobs.html"},{"cat":"Company","badge":"💼 Target Company","title":"Thinkpalm","sub":"Product / embedded · Kochi, Trivandrum · Networking/embedded + some web roles.","url":"jobs.html"},{"cat":"Company","badge":"💼 Target Company","title":"Simelabs (Astek)","sub":"Product / service · Infopark · Java/Spring + Angular full-stack teams.","url":"jobs.html"},{"cat":"Company","badge":"💼 Target Company","title":"NeST Digital","sub":"Product / service · Kochi, Trivandrum · Broad stack; regular fresher intake.","url":"jobs.html"},{"cat":"Company","badge":"💼 Target Company","title":"Tata Elxsi","sub":"Design / engineering · Trivandrum, Kochi · Embedded + digital; good brand on resume.","url":"jobs.html"},{"cat":"Company","badge":"💼 Target Company","title":"EY GDS","sub":"GCC · Kochi, Trivandrum · Enterprise tech; pays better than classic service firms.","url":"jobs.html"},{"cat":"Company","badge":"💼 Target Company","title":"Litmus7","sub":"Retail tech · Kochi · Retail/e-commerce tech; modern JS stack.","url":"jobs.html"},{"cat":"Company","badge":"💼 Target Company","title":"CareStack","sub":"SaaS product · Trivandrum · Dental SaaS; product-minded engineering.","url":"jobs.html"},{"cat":"Company","badge":"💼 Target Company","title":"SurveySparrow","sub":"SaaS product · Kochi · Feedback SaaS; React-heavy frontend.","url":"jobs.html"},{"cat":"Company","badge":"💼 Target Company","title":"Zoho / Freshworks","sub":"Product (Tamil Nadu) · Chennai · South India product giants; strong for a 1–2 year jump.","url":"jobs.html"},{"cat":"Cheat","badge":"⚡ Cheat Sheet","title":"VS Code keyboard shortcuts (official PDF)","sub":"PDF · Print it. Stick it on your wall.","url":"https://code.visualstudio.com/shortcuts/keyboard-shortcuts-windows.pdf"},{"cat":"Cheat","badge":"⚡ Cheat Sheet","title":"GitHub Git cheat sheet (official PDF)","sub":"PDF · Every command you need for the first year.","url":"https://education.github.com/git-cheat-sheet-education.pdf"},{"cat":"Cheat","badge":"⚡ Cheat Sheet","title":"Docker CLI cheat sheet (official PDF)","sub":"PDF · For Season 6 deployment week.","url":"https://docs.docker.com/get-started/docker_cheatsheet.pdf"},{"cat":"Cheat","badge":"⚡ Cheat Sheet","title":"Chrome DevTools shortcuts","sub":"Web · Learn Ctrl+Shift+C and Ctrl+Shift+P first.","url":"https://developer.chrome.com/docs/devtools/shortcuts"},{"cat":"Cheat","badge":"⚡ Cheat Sheet","title":"MDN JavaScript reference","sub":"Web · The only JS docs you should trust.","url":"https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference"},{"cat":"Cheat","badge":"⚡ Cheat Sheet","title":"React official docs","sub":"Web · Read &#x27;Thinking in React&#x27; twice.","url":"https://react.dev/learn"},{"cat":"Cheat","badge":"⚡ Cheat Sheet","title":"Node.js learn","sub":"Web · Event loop + modules sections.","url":"https://nodejs.org/en/learn"},{"cat":"Cheat","badge":"⚡ Cheat Sheet","title":"SQL quick reference","sub":"Web · Bookmark for Season 5.","url":"https://www.w3schools.com/sql/sql_quickref.asp"},{"cat":"Cheat","badge":"⚡ Cheat Sheet","title":"Power BI keyboard shortcuts","sub":"Web · Speeds up dashboard building.","url":"https://learn.microsoft.com/en-us/power-bi/create-reports/desktop-keyboard-shortcuts"},{"cat":"Cheat","badge":"⚡ Cheat Sheet","title":"Markdown cheat sheet","sub":"Web · For READMEs that actually look good.","url":"https://www.markdownguide.org/cheat-sheet/"},{"cat":"Cheat","badge":"⚡ Cheat Sheet","title":"DevDocs (offline docs)","sub":"Web · All docs in one search bar, works offline.","url":"https://devdocs.io"},{"cat":"Cheat","badge":"⚡ Cheat Sheet","title":"regex101","sub":"Web · Test regex with explanations.","url":"https://regex101.com"},{"cat":"Cheat","badge":"⚡ Cheat Sheet","title":"Can I Use","sub":"Web · Before using any new CSS feature at work.","url":"https://caniuse.com"},{"cat":"Cheat","badge":"⚡ Cheat Sheet","title":"Full-stack roadmap","sub":"Web · Your map when you feel lost.","url":"https://roadmap.sh/full-stack"}];
+  var state = {};
+  try { state = JSON.parse(localStorage.getItem(KEY)) || {}; } catch(e) { state = {}; }
+
+  function save(){ try { localStorage.setItem(KEY, JSON.stringify(state)); } catch(e){} }
+
+  // 1. Dark Mode Toggle
+  var themeBtn = document.getElementById('themeToggle');
+  function applyTheme(t){
+    if (t === 'dark') {
+      document.documentElement.classList.add('dark');
+      if (themeBtn) themeBtn.textContent = '☀️';
+    } else {
+      document.documentElement.classList.remove('dark');
+      if (themeBtn) themeBtn.textContent = '🌙';
+    }
+  }
+  var savedTheme = localStorage.getItem(THEME_KEY) || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  applyTheme(savedTheme);
+
+  if (themeBtn) {
+    themeBtn.addEventListener('click', function(){
+      var isDark = document.documentElement.classList.contains('dark');
+      var newTheme = isDark ? 'light' : 'dark';
+      localStorage.setItem(THEME_KEY, newTheme);
+      applyTheme(newTheme);
+    });
+  }
+
+  // 2. Overall Progress Updates
+  function updateOverall(){
+    var done = 0;
+    ALL_IDS.forEach(function(id){ if (state[id]) done++; });
+    var pct = TOTAL ? Math.round(done * 100 / TOTAL) : 0;
+
+    var big = document.getElementById('pct-big');
+    if (big) big.textContent = pct + '%';
+    var cnt = document.getElementById('pct-count');
+    if (cnt) cnt.textContent = done + ' / ' + TOTAL + ' checkpoints';
+    var fill = document.getElementById('overall-fill');
+    if (fill) fill.style.width = pct + '%';
+    var mini = document.getElementById('nav-fill');
+    if (mini) mini.style.width = pct + '%';
+    var nl = document.getElementById('nav-pct-label');
+    if (nl) nl.textContent = pct + '%';
+  }
+
+  // 3. Roadmap Checkbox Handlers & Toolbar
+  
+
+  // 4. Jobs Referral Copy Handler
+  
+
+  // 5. Interview Q&A Interactive Handlers
+  
+
+  // 6. Search Modal & Command Palette
+  var searchBackdrop = document.getElementById('searchBackdrop');
+  var searchTrigger = document.getElementById('searchTrigger');
+  var searchInput = document.getElementById('searchInput');
+  var searchResults = document.getElementById('searchResults');
+
+  function openSearch(){
+    if (!searchBackdrop) return;
+    searchBackdrop.classList.add('open');
+    if (searchInput) {
+      searchInput.value = '';
+      renderSearchResults('');
+      setTimeout(function(){ searchInput.focus(); }, 50);
+    }
+  }
+
+  function closeSearch(){
+    if (searchBackdrop) searchBackdrop.classList.remove('open');
+  }
+
+  if (searchTrigger) searchTrigger.addEventListener('click', openSearch);
+  if (searchBackdrop) {
+    searchBackdrop.addEventListener('click', function(e){
+      if (e.target === searchBackdrop) closeSearch();
+    });
+  }
+
+  window.addEventListener('keydown', function(e){
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+      e.preventDefault();
+      if (searchBackdrop && searchBackdrop.classList.contains('open')) closeSearch(); else openSearch();
+    } else if (e.key === 'Escape') {
+      closeSearch();
+      var timerPopup = document.getElementById('timerPopup');
+      if (timerPopup) timerPopup.classList.remove('open');
+    }
+  });
+
+  function renderSearchResults(q){
+    if (!searchResults) return;
+    q = (q || '').trim().toLowerCase();
+    var filtered = [];
+    if (!q) {
+      filtered = SEARCH_DATA.slice(0, 12);
+    } else {
+      filtered = SEARCH_DATA.filter(function(item){
+        return item.title.toLowerCase().indexOf(q) !== -1 ||
+               item.sub.toLowerCase().indexOf(q) !== -1 ||
+               item.cat.toLowerCase().indexOf(q) !== -1;
+      }).slice(0, 30);
+    }
+
+    if (filtered.length === 0) {
+      searchResults.innerHTML = '<div style="padding:28px;text-align:center;color:#78718C">No matches found for "' + q + '". Try searching for "React", "Docker", "Git", "JWT", or "Infopark".</div>';
+      return;
+    }
+
+    searchResults.innerHTML = filtered.map(function(item, idx){
+      return '<a class="search-item' + (idx === 0 ? ' selected' : '') + '" href="' + item.url + '">' +
+        '<div class="search-item-top">' +
+          '<b>' + item.title + '</b>' +
+          '<span class="search-badge">' + item.badge + '</span>' +
+        '</div>' +
+        '<span>' + item.sub + '</span>' +
+      '</a>';
+    }).join('');
+  }
+
+  if (searchInput) {
+    searchInput.addEventListener('input', function(e){
+      renderSearchResults(e.target.value);
+    });
+
+    searchInput.addEventListener('keydown', function(e){
+      var items = searchResults.querySelectorAll('.search-item');
+      var currIndex = -1;
+      items.forEach(function(el, i){ if (el.classList.contains('selected')) currIndex = i; });
+
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        var next = (currIndex + 1) % items.length;
+        items.forEach(function(el){ el.classList.remove('selected'); });
+        if (items[next]) {
+          items[next].classList.add('selected');
+          items[next].scrollIntoView({ block: 'nearest' });
+        }
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        var prev = (currIndex - 1 + items.length) % items.length;
+        items.forEach(function(el){ el.classList.remove('selected'); });
+        if (items[prev]) {
+          items[prev].classList.add('selected');
+          items[prev].scrollIntoView({ block: 'nearest' });
+        }
+      } else if (e.key === 'Enter') {
+        e.preventDefault();
+        if (currIndex >= 0 && items[currIndex]) {
+          items[currIndex].click();
+        }
+      }
+    });
+  }
+
+  // 7. Pomodoro Study Timer
+  var timerToggleBtn = document.getElementById('timerToggleBtn');
+  var timerPopup = document.getElementById('timerPopup');
+  var timerCloseBtn = document.getElementById('timerCloseBtn');
+  var timerDigits = document.getElementById('timerDigits');
+  var timerBadge = document.getElementById('timerBadge');
+  var timerStartBtn = document.getElementById('timerStartBtn');
+  var timerResetBtn = document.getElementById('timerResetBtn');
+  var timerModeBtns = document.querySelectorAll('.timer-mode-btn');
+
+  var timerDuration = 1500;
+  var timerRemaining = 1500;
+  var timerInterval = null;
+  var isRunning = false;
+
+  function formatTime(s){
+    var m = Math.floor(s / 60);
+    var sec = s % 60;
+    return (m < 10 ? '0' : '') + m + ':' + (sec < 10 ? '0' : '') + sec;
+  }
+
+  function updateTimerDisplay(){
+    var str = formatTime(timerRemaining);
+    if (timerDigits) timerDigits.textContent = str;
+    if (timerBadge) timerBadge.textContent = str;
+  }
+
+  function playChime(){
+    try {
+      var ctx = new (window.AudioContext || window.webkitAudioContext)();
+      var osc = ctx.createOscillator();
+      var gain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(587.33, ctx.currentTime);
+      osc.frequency.setValueAtTime(880.00, ctx.currentTime + 0.15);
+      gain.gain.setValueAtTime(0.3, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.6);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start();
+      osc.stop(ctx.currentTime + 0.6);
+    } catch(err){}
+  }
+
+  if (timerToggleBtn && timerPopup) {
+    timerToggleBtn.addEventListener('click', function(){
+      timerPopup.classList.toggle('open');
+    });
+    if (timerCloseBtn) {
+      timerCloseBtn.addEventListener('click', function(){
+        timerPopup.classList.remove('open');
+      });
+    }
+
+    timerModeBtns.forEach(function(btn){
+      btn.addEventListener('click', function(){
+        timerModeBtns.forEach(function(b){ b.classList.remove('active'); });
+        btn.classList.add('active');
+        timerDuration = parseInt(btn.dataset.time, 10);
+        timerRemaining = timerDuration;
+        clearInterval(timerInterval);
+        isRunning = false;
+        if (timerStartBtn) {
+          timerStartBtn.textContent = '▶ Start';
+          timerStartBtn.className = 'timer-ctrl-btn timer-start';
+        }
+        updateTimerDisplay();
+      });
+    });
+
+    if (timerStartBtn) {
+      timerStartBtn.addEventListener('click', function(){
+        if (!isRunning) {
+          isRunning = true;
+          timerStartBtn.textContent = '⏸ Pause';
+          timerStartBtn.className = 'timer-ctrl-btn timer-pause';
+          timerInterval = setInterval(function(){
+            if (timerRemaining > 0) {
+              timerRemaining--;
+              updateTimerDisplay();
+            } else {
+              clearInterval(timerInterval);
+              isRunning = false;
+              playChime();
+              alert('🎉 Focus block finished! Take a break or start your next sprint.');
+              timerRemaining = timerDuration;
+              updateTimerDisplay();
+              timerStartBtn.textContent = '▶ Start';
+              timerStartBtn.className = 'timer-ctrl-btn timer-start';
+            }
+          }, 1000);
+        } else {
+          isRunning = false;
+          clearInterval(timerInterval);
+          timerStartBtn.textContent = '▶ Resume';
+          timerStartBtn.className = 'timer-ctrl-btn timer-start';
+        }
+      });
+    }
+
+    if (timerResetBtn) {
+      timerResetBtn.addEventListener('click', function(){
+        clearInterval(timerInterval);
+        isRunning = false;
+        timerRemaining = timerDuration;
+        if (timerStartBtn) {
+          timerStartBtn.textContent = '▶ Start';
+          timerStartBtn.className = 'timer-ctrl-btn timer-start';
+        }
+        updateTimerDisplay();
+      });
+    }
+  }
+
+  updateOverall();
+
+  // Storage sync across tabs
+  window.addEventListener('storage', function(e){
+    if (e.key === KEY) {
+      try { state = JSON.parse(e.newValue) || {}; } catch(err){}
+      
+      updateOverall();
+    } else if (e.key === THEME_KEY) {
+      applyTheme(e.newValue || 'light');
+    }
+  });
+
+  // Back to top
+  var top = document.getElementById('toTop');
+  window.addEventListener('scroll', function(){
+    if (!top) return;
+    if (window.scrollY > 600) top.classList.add('show'); else top.classList.remove('show');
+  }, {passive:true});
+  if (top) top.addEventListener('click', function(){ window.scrollTo({top:0, behavior:'smooth'}); });
+})();
+</script>
+</body>
+</html>

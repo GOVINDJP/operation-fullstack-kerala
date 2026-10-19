@@ -1,0 +1,10 @@
+{
+  "name": "operation-fullstack-kerala",
+  "version": "1.0.0",
+  "private": true,
+  "description": "32-Week Full Stack Roadmap & Career Playbook — Kerala Edition",
+  "scripts": {
+    "start": "node server.js",
+    "verify": "node verify_pages.js"
+  }
+}
